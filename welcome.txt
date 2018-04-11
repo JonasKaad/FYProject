@@ -1,0 +1,31 @@
+Welcome to the StructVis pre-pre-alpha! :)
+--------------------------------------------------------------------------------------------------------------
+If it turns out we like this design with the tabs, this 'welcome' tab, can later be configured to load 
+an FXML file, which can be created to look much better than this currently does. The text below is just
+some filler text. Have a look around! :)
+--------------------------------------------------------------------------------------------------------------
+Lorem ipsum dolor sit amet, lectus wisi donec congue congue urna auctor, at vitae eu eu elementum vel. 
+Et amet wisi consectetuer, justo netus lectus tortor nascetur. Id feugiat ligula adipiscing suscipit lacus
+fusce. Neque viverra nunc tristique pellentesque, pellentesque sed libero. Arcu blandit per ullamcorper, 
+nibh nonummy sit et. Elementum quam, optio in eget cras, nec accumsan, wisi metus, porttitor tortor. 
+Est wisi, litora auctor congue vel dictum praesent.
+
+Eu sollicitudin congue adipiscing vitae urna massa, congue justo tortor litora pulvinar, non eiusmod eget 
+libero lectus, quam et a facilisis. In placerat sapien maecenas quam nunc justo, nulla class massa. Neque 
+donec mi tempor porta, a ipsum laoreet dui ut fringilla pharetra, felis urna faucibus vitae ac dolore 
+penatibus. Venenatis ac in potenti, ex nullam id in nonummy nam in, interdum nulla nisl ut, nam volutpat 
+eu in, id odio nam nec nunc sed pretium. Orci urna hymenaeos augue ut, cras amet, ligula magna nam nunc 
+dolor non pretium, viverra massa amet ante id fermentum, quis vestibulum ipsum praesent quisque. Nibh ut 
+velit vestibulum per porttitor placerat. Mi non posuere scelerisque diam.
+
+Cras potenti etiam morbi amet dui cursus, elit rutrum dolor, vivamus consequat a ut, interdum nunc ac vel
+sapien tortor vel, donec orci ut. Donec mauris dolor nec vitae est pharetra, purus morbi wisi. Maecenas a 
+suspendisse, vel eros id varius justo at metus. Nullam nunc eget sit, sit sed urna id habitant curabitur 
+suspendisse. Amet nonummy, sed gravida sit eu. Fringilla elit nunc in sagittis, est voluptatem, ipsum est 
+nulla elit neque ut, risus accumsan ligula. Vulputate orci, malesuada quis nulla scelerisque semper velit 
+ultricies, fusce urna posuere mus.
+
+A nostra, nonummy luctus aliquam, placerat etiam, tellus suscipit lacinia, posuere justo suspendisse quam 
+sodales justo cursus. Molestie ac purus in suspendisse nunc, laborum elit lacus in. Nonummy erat sociis 
+faucibus per sed, volutpat suspendisse eu vel, a proin eu sollicitudin. Sollicitudin id et magna arcu nisl, 
+potenti pede, gravida lectus, id scelerisque. Mi nibh est, pharetra ut mollis.

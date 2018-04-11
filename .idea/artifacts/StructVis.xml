@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" build-on-make="true" name="StructVis">
+    <output-path>$PROJECT_DIR$/out/artifacts/StructVis</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="sample.Main" />
+        <option name="description" value="Application to visualize secondary structures of RNA sequences." />
+        <option name="height" value="768" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="StructVis" />
+        <option name="vendor" value="DAMMGAM" />
+        <option name="version" value="" />
+        <option name="width" value="1024" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="StructVis.jar">
+        <element id="module-output" name="FYProject" />
+      </element>
+    </root>
+  </artifact>
+</component>
