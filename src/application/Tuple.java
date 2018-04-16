@@ -15,12 +15,13 @@ package application;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-11
+ * 2018-04-16
  */
 
 class Tuple {
 
     private int i, j;
+    private double x, y;
 
     /**
      * Constructor which creates a new Tuple with parameters ( i, j ).
@@ -31,6 +32,11 @@ class Tuple {
     Tuple( int i, int j ) {
         this.i = i;
         this.j = j;
+    }
+
+    Tuple( double x, double y ) {
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -50,5 +56,9 @@ class Tuple {
     int getJ() {
         return this.j;
     }
+
+    double getX() { return this.x; }
+
+    double getY() { return this.y; }
 
 } // end class

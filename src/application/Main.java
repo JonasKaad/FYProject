@@ -30,7 +30,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-11
+ * 2018-04-13
  */
 
 public class Main extends Application {
@@ -47,7 +47,7 @@ public class Main extends Application {
      * Initiates the main window of the application
      */
     @Override
-    public void start( Stage stage ) {
+    public void start( Stage stage ) throws Exception {
         // for FXML - might be useful later in development
         //Parent root = FXMLLoader.load(getClass().getResource("application.fxml"));
 
@@ -74,6 +74,7 @@ public class Main extends Application {
         mainLayout.setBottom( createBottomMenu() );
         mainLayout.setLeft( createLeftToolbar() );
         mainLayout.setRight( right );
+
 
         // scenes are the contents of stages
         Scene mainScene = new Scene( mainLayout, 1024, 768 );
@@ -501,12 +502,12 @@ public class Main extends Application {
         Label matchesFoundLabel = new Label( stringBuilder.toString() );
 
         Label sequenceLabel = new Label( inputSequence );
-        sequenceLabel.setFont( new Font( "Consolas", 12 ) );
+        sequenceLabel.setFont( new Font( java.awt.Font.MONOSPACED, 12 ) );
         HBox.setHgrow( sequenceLabel, Priority.ALWAYS );
 
         Label dotBracketLabel = new Label( dotBracketOutput );
         HBox.setHgrow( dotBracketLabel, Priority.ALWAYS );
-        dotBracketLabel.setFont( new Font( "Consolas", 12 ) );
+        dotBracketLabel.setFont( Font.font( java.awt.Font.MONOSPACED, 13 ) );
 
         VBox vBox = new VBox();
         vBox.setPadding( new Insets( 5 ) );
