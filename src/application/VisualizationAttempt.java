@@ -53,7 +53,18 @@ public class VisualizationAttempt extends Application {
 
         mainLayout.getChildren().add( canvas );
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
+        /*
+        double diameter, radius, theta, p0x, p0y, px, py;
+        String sequence = "GGGAAACCUG";
+        String vsequence = sequence;
+        char[] chars = vsequence.toCharArray();
+        int length = chars.length;
+        double sequenceInPixels = ( vsequence.length() * 30 ) + 24;
+        diameter = ( sequenceInPixels / Math.PI ); // the multiplier at the end is a scaling factor
+        radius = diameter / 2;
+        gc.setLineWidth( 1.5 );
+        gc.strokeArc( 400 - radius, 400 - radius, diameter, diameter, 0, 45, ArcType.OPEN );
+        */
         drawCircleRep( gc );
 
         //drawLargeSequence( chars, gc );
@@ -154,53 +165,59 @@ public class VisualizationAttempt extends Application {
         double diameter, radius, theta, p0x, p0y, px, py;
 
         // load in images
-        Image adenine = new Image( "adenine.png" );
-        Image cytosine = new Image( "cytosine.png" );
-        Image guanine = new Image( "guanine.png" );
-        Image urasil = new Image( "urasil.png" );
-        //Image adenine = new Image( "adenine-small.png" );
-        //Image cytosine = new Image( "cytosine-small.png" );
-        //Image guanine = new Image( "guanine-small.png" );
-        //Image urasil = new Image( "urasil-small.png" );
+        //Image adenine = new Image( "adenine.png" );
+        //Image cytosine = new Image( "cytosine.png" );
+        //Image guanine = new Image( "guanine.png" );
+        //Image urasil = new Image( "urasil.png" );
+        Image blank = new Image( "blank-small.png" );
+        Image adenine = new Image( "adenine-small.png" );
+        Image cytosine = new Image( "cytosine-small.png" );
+        Image guanine = new Image( "guanine-small.png" );
+        Image urasil = new Image( "urasil-small.png" );
 
 
-        String sequence = "GGGAAACCU";
+        String sequence = "GGGAAACCUGGGAAACCUGGGAAACCUGGGAAACCU";
+        //String vsequence = sequence;
         char[] chars = sequence.toCharArray();
         int length = chars.length;
         double sequenceInPixels = ( sequence.length() * 30 ) + adenine.getWidth();
 
         // compute the diameter of the circle
-        diameter = ( sequenceInPixels / Math.PI ) * 2; // the multiplier at the end is a scaling factor
+        diameter = ( sequenceInPixels / Math.PI ); // the multiplier at the end is a scaling factor
         radius = diameter / 2;
 
 
         // compute the angle theta between two points P0 and P, where P0 is located at ( 0, sin( 3*PI / 2 ) ),
         // and P is a variable point that we wish to calculate the coordinates of, which requires the angle theta.
-        theta = Math.toRadians( 360 / ( length + 1 ) );
+        theta = Math.toRadians( 360 / length );
         // TODO Either a better way of calculating the angle theta is needed or we need to find a better way
         // TODO of figuring out from where and how we can start drawing the circle, as for some inputs, the
         // TODO images get spaced weirdly.
+        double thetaToDegrees = 360 / length;
 
         gc.setLineWidth( 1.5 );
-        gc.strokeArc( 400 - radius, 400 - radius, diameter, diameter, 300, 295, ArcType.OPEN );
+        gc.strokeArc( 400 - radius, 400 - radius, diameter, diameter, 270 + ( thetaToDegrees * 1.5 ), 360 - ( thetaToDegrees * 1.5 ), ArcType.OPEN );
 
         // compute coordinates of P0
         p0x = 400 - ( adenine.getWidth() / 2 );
         p0y = 400 + radius - ( adenine.getWidth() / 2 );
 
-        for ( int i = 1; i <= length; i++ ) {
+        for ( int i = 0; i < length; i++ ) {
             px = p0x - radius * Math.sin( theta * i );
             py = p0y - radius * ( 1 - Math.cos( theta * i ) );
-            if ( chars[i - 1] == 'A' ) {
+            if ( chars[i] == 'B' ) {
+                gc.drawImage( blank, px, py );
+            }
+            else if ( chars[i] == 'A' ) {
                 gc.drawImage( adenine, px, py );
             }
-            else if ( chars[i - 1] == 'C' ) {
+            else if ( chars[i] == 'C' ) {
                 gc.drawImage( cytosine, px, py );
             }
-            else if ( chars[i - 1] == 'G' ) {
+            else if ( chars[i] == 'G' ) {
                 gc.drawImage( guanine, px, py );
             }
-            else if ( chars[i - 1] == 'U' ) {
+            else if ( chars[i] == 'U' ) {
                 gc.drawImage( urasil, px, py );
             }
         }

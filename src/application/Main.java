@@ -77,8 +77,7 @@ public class Main extends Application {
 
 
         // scenes are the contents of stages
-        Scene mainScene = new Scene( mainLayout, 1024, 768 );
-
+        Scene mainScene = new Scene( mainLayout, 1024, 700 );
         mainStage.setScene( mainScene );
 
         // handle close operation

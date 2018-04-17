@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/StructVis</output-path>
     <properties id="javafx-properties">
       <options>
-        <option name="appClass" value="sample.Main" />
+        <option name="appClass" value="application.Main" />
         <option name="description" value="Application to visualize secondary structures of RNA sequences." />
         <option name="height" value="768" />
         <option name="htmlPlaceholderId" value="" />
