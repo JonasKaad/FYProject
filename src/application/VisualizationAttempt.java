@@ -176,10 +176,10 @@ public class VisualizationAttempt extends Application {
         Image urasil = new Image( "urasil-small.png" );
 
 
-        String sequence = "GGGAAACCUGGGAAACCUGGGAAACCUGGGAAACCU";
-        //String vsequence = sequence;
-        char[] chars = sequence.toCharArray();
-        int length = chars.length;
+        String sequence = "GGGAAACCU";
+        String vsequence = sequence + "B";
+        char[] chars = vsequence.toCharArray();
+        int length = chars.length - 1;
         double sequenceInPixels = ( sequence.length() * 30 ) + adenine.getWidth();
 
         // compute the diameter of the circle
@@ -196,7 +196,7 @@ public class VisualizationAttempt extends Application {
         double thetaToDegrees = 360 / length;
 
         gc.setLineWidth( 1.5 );
-        gc.strokeArc( 400 - radius, 400 - radius, diameter, diameter, 270 + ( thetaToDegrees * 1.5 ), 360 - ( thetaToDegrees * 1.5 ), ArcType.OPEN );
+        gc.strokeArc( 400 - radius, 400 - radius, diameter, diameter, 270 + thetaToDegrees, 360 - thetaToDegrees, ArcType.OPEN );
 
         // compute coordinates of P0
         p0x = 400 - ( adenine.getWidth() / 2 );
