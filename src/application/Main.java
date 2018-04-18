@@ -5,7 +5,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -39,6 +42,8 @@ public class Main extends Application {
     private static int tabsCreated = 0;
     private TabPane mainTabPane;
     private ToolBar left, right;
+    private CheckBox circleCheckBox, sequenceCheckBox, matrixCheckBox,
+            dotBracketCheckBox, convensiontalCheckBox, dotPlotCheckBox;
 
     /** Main method */
     public static void main( String[] args ) { launch( args ); }
@@ -73,7 +78,7 @@ public class Main extends Application {
         mainLayout.setTop( createTopMenu() );
         mainLayout.setBottom( createBottomMenu() );
         mainLayout.setLeft( createLeftToolbar() );
-        mainLayout.setRight( right );
+        //mainLayout.setRight( right );
 
 
         // scenes are the contents of stages
@@ -152,32 +157,36 @@ public class Main extends Application {
         titledPane.setText( "Visual Representation" );
         titledPane.setTextAlignment( TextAlignment.CENTER );
 
-        CheckBox matrixCheckBox = new CheckBox();
-        matrixCheckBox.setText( "Matrix (Default)" );
-        matrixCheckBox.setSelected( true );
+        sequenceCheckBox = new CheckBox();
+        sequenceCheckBox.setText( "Sequence" );
+        sequenceCheckBox.setSelected( true );
 
-        CheckBox dotBracketCheckBox = new CheckBox();
+        circleCheckBox = new CheckBox();
+        circleCheckBox.setText( "Circle Plot" );
+        circleCheckBox.setSelected( true );
+
+        matrixCheckBox = new CheckBox();
+        matrixCheckBox.setText( "Matrix" );
+
+        dotBracketCheckBox = new CheckBox();
         dotBracketCheckBox.setText( "Dot-Bracket" );
-        dotBracketCheckBox.setSelected( true );
 
-        CheckBox convensiontalCheckBox = new CheckBox();
+        convensiontalCheckBox = new CheckBox();
         convensiontalCheckBox.setText( "Conventional" );
 
-        CheckBox circleCheckBox = new CheckBox();
-        circleCheckBox.setText( "Circle Plot" );
-
-        CheckBox dotPlotCheckBox = new CheckBox();
+        dotPlotCheckBox = new CheckBox();
         dotPlotCheckBox.setText( "Dot Plot" );
 
         VBox vBox = new VBox();
         vBox.setPadding( new Insets( 5 ) );
         vBox.getChildren().addAll(
                 label2,
-                matrixCheckBox,
-                dotBracketCheckBox,
-                convensiontalCheckBox,
+                sequenceCheckBox,
                 circleCheckBox,
-                dotPlotCheckBox
+                convensiontalCheckBox,
+                dotPlotCheckBox,
+                matrixCheckBox,
+                dotBracketCheckBox
         );
 
         titledPane.setContent( vBox );
@@ -257,6 +266,24 @@ public class Main extends Application {
 
         TextField input = new TextField();
         HBox.setHgrow( input, Priority.ALWAYS );
+
+        // makes the input TextField react to pressing the ENTER key
+        input.setOnKeyPressed( ( event ) -> {
+            if ( event.getCode().equals( KeyCode.ENTER ) ) {
+                String str = input.getText();
+                computeSequence( str );
+            }
+        });
+
+        // the input bar can be enlarged by the following code
+        //inputBar.setMinHeight( 45 );
+        //input.setFont( Font.font( "Tahoma", FontWeight.BOLD, 20 ) );
+        //input.setMinHeight( 35 );
+        //Button button = new Button( ">" );
+        //button.setFont( Font.font( "Tahoma", FontWeight.BOLD, 20 ) );
+        //button.setMinWidth( 35 );
+        //button.setMinHeight( 35 );
+
         HBox.setMargin( input, new Insets( 0,5,0,0 ) );
         input.setPromptText( "Enter RNA string" );
 
@@ -264,8 +291,7 @@ public class Main extends Application {
         button.setMinWidth( 80 );
         button.setOnAction( e -> {
             String str = input.getText();
-            int i = str.length();
-            createMatrix( i, str );
+            computeSequence( str );
         } );
 
         inputBar.getItems().addAll( input, button );
@@ -372,16 +398,16 @@ public class Main extends Application {
     }
 
     /**
-     * Places the result computed by the createMatrix method into a new Tab.
+     * Places the result computed by the computeSequence method into a new Tab.
      *
-     * @param borderPane
+     * @param hBox
      */
-    private void resultToTab( BorderPane borderPane ) {
+    private void resultToTab( HBox hBox ) {
         tabsCreated++;
 
         Tab tab = new Tab();
         tab.setText( "New " + tabsCreated );
-        tab.setContent( borderPane );
+        tab.setContent( hBox );
         mainTabPane.getTabs().add( tab );
         mainTabPane.getSelectionModel().select( tab );
     }
@@ -396,16 +422,45 @@ public class Main extends Application {
      * the final visual representation into a tab, which the resultToTab
      * method then adds to the UI.
      *
-     * @param size     the length of the ACGU sequence
      * @param sequence the ACGU input sequence
      */
-    private void createMatrix( int size, String sequence ) {
+    private void computeSequence( String sequence ) {
         // create a new instance of the Nussinov class, to run the algorithm
         Nussinov nussinov = new Nussinov();
         int[][] matrix = nussinov.initiate( sequence );
 
+        int sequenceLength = sequence.length();
+
         // store the string sequence in a char array
         char[] charArray = sequence.toCharArray();
+
+        // retrieve the matches the Nussinov algorithm found as a List of Tuples
+        List<Tuple> matches = nussinov.getMatches();
+
+        // retrieve a Dot-Bracket notation output computed by the Nussinov algorithm
+        String dotBracket = nussinov.getDotBracketOutput();
+
+
+        HBox mainLayout = new HBox();
+        mainLayout.setAlignment( Pos.TOP_LEFT );
+        //mainLayout.setStyle( "-fx-border-color: black;" );
+
+        Canvas canvas = new Canvas( 1000, 500 );
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        if ( sequenceCheckBox.isSelected() ) {
+            Visualize.drawSequence( gc, sequence, matches );
+        }
+        if ( circleCheckBox.isSelected() ) {
+            Visualize.drawCircleRep( gc, sequence, matches, canvas.getWidth() / 2, canvas.getHeight() / 2 );
+        }
+        mainLayout.getChildren().add( canvas );
+        resultToTab( mainLayout );
+
+    }
+
+
+    private GridPane createMatrix( int size, int[][] matrix, char[] charArray ) {
 
         GridPane root = new GridPane();
         root.setAlignment( Pos.CENTER );
@@ -445,14 +500,10 @@ public class Main extends Application {
         // this could perhaps be a toggle-able option?
         //root.setGridLinesVisible( true );
 
-        // retrieve the matches the Nussinov algorithm found as a List of Tuples
-        List<Tuple> matches = nussinov.getMatches();
 
-        // retrieve a Dot-Bracket notation output computed by the Nussinov algorithm
-        String dotBracket = nussinov.getDotBracketOutput();
 
         // pass the above to the listMatches method, to organize the results found
-        VBox listedResults = listMatches( sequence, dotBracket, matches );
+        //VBox listedResults = listMatches( sequence, dotBracket, matches );
 
         // this is to put the result in a ScrollPane, however:
         // TODO There are currently some problems with horizontal expansion of the ScrollPane
@@ -463,17 +514,31 @@ public class Main extends Application {
         scrollPane.setFitToHeight( true );
         //scrollPane.setPannable( true ); // <- enables panning, by clicking and holding mouse button
 
-        scrollPane.setContent( root );
+        //scrollPane.setContent( root );
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter( scrollPane );
-        borderPane.setBottom( listedResults );
+        //borderPane.setBottom( listedResults );
 
-        resultToTab( borderPane );
+        //resultToTab( borderPane );
+
+        return root;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * Builds a VBox based on the results found by a call to the createMatrix method
+     * Builds a VBox based on the results found by a call to the computeSequence method
      * The VBox consists of 3 HBoxes, with the first one displaying the matches found,
      * the second displaying the input string or letter sequence and the third display-
      * ing the dot-bracket representation of the sequence.
@@ -483,7 +548,7 @@ public class Main extends Application {
      * @param matches          a List of Tuples, with each Tuple containing an i, j
      *                         index to a match in the matrix computed by the Nussi-
      *                         nov algorithm.
-     * @return a VBox organizing some results computed by the createMatrix method.
+     * @return a VBox organizing some results computed by the computeSequence method.
      */
     private VBox listMatches( String inputSequence, String dotBracketOutput, List<Tuple> matches ) {
         // we build a string of matches from the tuples found

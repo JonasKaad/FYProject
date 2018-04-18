@@ -55,6 +55,7 @@ public class VisualizationAttempt extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         /*
         double diameter, radius, theta, p0x, p0y, px, py;
+        // AUGACAGCAAGGGGAGAGACCUGACCGAAAACCUCGGGAUACAGGCGCCGAAGGAGCAAACUGCGGAGUGAAUCUCUCAGGCAAAAGAACUCUUGCUCGACG // 102 chars long
         String sequence = "GGGAAACCUG";
         String vsequence = sequence;
         char[] chars = vsequence.toCharArray();
