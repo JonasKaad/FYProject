@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -268,10 +269,12 @@ public class Main extends Application {
         HBox.setHgrow( input, Priority.ALWAYS );
 
         // makes the input TextField react to pressing the ENTER key
+        // TODO Make check to ensure letters other than
+        // TODO ACGU are removed
         input.setOnKeyPressed( ( event ) -> {
             if ( event.getCode().equals( KeyCode.ENTER ) ) {
                 String str = input.getText();
-                computeSequence( str );
+                computeSequence( str.toUpperCase() );
             }
         });
 
@@ -291,7 +294,7 @@ public class Main extends Application {
         button.setMinWidth( 80 );
         button.setOnAction( e -> {
             String str = input.getText();
-            computeSequence( str );
+            computeSequence( str.toUpperCase() );
         } );
 
         inputBar.getItems().addAll( input, button );
@@ -440,10 +443,13 @@ public class Main extends Application {
         // retrieve a Dot-Bracket notation output computed by the Nussinov algorithm
         String dotBracket = nussinov.getDotBracketOutput();
 
+        // GGGAGUACCCAUGAGAGUCACUGA
 
         HBox mainLayout = new HBox();
         mainLayout.setAlignment( Pos.TOP_LEFT );
-        //mainLayout.setStyle( "-fx-border-color: black;" );
+        mainLayout.setStyle( "-fx-border-color: black;" );
+
+        //GridPane gridPane = createMatrix( sequenceLength, matrix, charArray );
 
         Canvas canvas = new Canvas( 1000, 500 );
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -455,6 +461,8 @@ public class Main extends Application {
             Visualize.drawCircleRep( gc, sequence, matches, canvas.getWidth() / 2, canvas.getHeight() / 2 );
         }
         mainLayout.getChildren().add( canvas );
+        //mainLayout.getChildren().add( gridPane );
+
         resultToTab( mainLayout );
 
     }

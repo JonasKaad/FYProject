@@ -53,7 +53,7 @@ public class Nussinov {
      *
      * This method computes the DPmatrix from a provided sequence of
      * characters using a dynamic programming approach. Once the entries
-     * of the matrix has been computed, as traceback procedure is initiated
+     * of the matrix has been computed, a traceback procedure is initiated
      * to find any matches in the sequence.
      *
      * @param s a sequence to be computed
@@ -77,7 +77,13 @@ public class Nussinov {
         return DPmatrix;
     }
 
-    /** computational part of nussinov algorithm */
+    /**
+     * Computational part of Nussinov algorithm.
+     *
+     * @param i a value i into the DPmatrix.
+     * @param j a value j into the DPmatrix.
+     * @return the max value computed.
+     */
     private int compute( int i, int j ) {
         int a = DPmatrix[i + 1][j];
         int b = DPmatrix[i][j - 1];
@@ -92,20 +98,46 @@ public class Nussinov {
         return Math.max( r1, r2 );
     }
 
-    /** sigma part of nussinov algorithm */
+    /**
+     * Sigma part of Nussinov algorithm.
+     *
+     * @param i a value i into the DPmatrix.
+     * @param j a value j into the DPmatrix.
+     * @return
+     */
     private int sigma( int i, int j ) {
         char a = inputArray[i];
         char b = inputArray[j];
         if( ( a == 'C' && b == 'G' ) ||
-            ( a == 'G' && b == 'C' ) ||
-            ( a == 'A' && b == 'U' ) ||
-            ( a == 'U' && b == 'A' ) ) {
-                return 1;
+                ( a == 'G' && b == 'C' ) ||
+                ( a == 'A' && b == 'U' ) ||
+                ( a == 'U' && b == 'A' ) ||
+                ( a == 'G' && b == 'U' ) ||
+                ( a == 'U' && b == 'G' ) ) {
+            return 1;
         }
+        // Outline for a way of adding weigth to scores
+        /*if( ( a == 'C' && b == 'G' ) ||
+            ( a == 'G' && b == 'C' ) ) {
+                return 3;
+        }
+        else if ( ( a == 'A' && b == 'U' ) ||
+                ( a == 'U' && b == 'A' ) ) {
+            return 2;
+        }
+        else if ( ( a == 'G' && b == 'U' ) ||
+                ( a == 'U' && b == 'G' ) ) {
+            return 1;
+        }*/
         return 0;
     }
 
-    /** traceback part of nussinov algorithm */
+    /**
+     * Traceback part of Nussinov algorithm.
+     *
+     * @param i a value i into the DPmatrix.
+     * @param j a value j into the DPmatrix.
+     */
     private void traceback( int i, int j ) {
         if( i < j ) {
             // case 1
@@ -126,7 +158,7 @@ public class Nussinov {
 
             // case 4
             else {
-                for ( int k = ( i + 1 ); k < ( j - 1 ); k++ ) {
+                for ( int k = ( i + 1 ); k <= ( j - 1 ); k++ ) {
                     if( DPmatrix[i][j] == ( DPmatrix[i][k] + DPmatrix[k + 1][j] ) ) {
                         traceback( i, k );
                         traceback( k + 1, j );
@@ -137,9 +169,20 @@ public class Nussinov {
         }
     }
 
-    /** method that uses sigma method to check for letter matches */
+    /**
+     * Method that uses sigma method to check for letter matches.
+     * In addition, a check has been included, to ensure that a match found
+     * by the Nussinov algorithm is only added to the list of matches, if
+     * the spacing between letters is greater than 3.
+     *
+     * @param i a value i into the DPmatrix.
+     * @param j a value j into the DPmatrix.
+     */
     private void checkMatch( int i, int j ) {
-        if( sigma( i, j ) == 1 ) {
+        /*if( sigma( i, j ) == 1 ) {
+            matches.add( new Tuple( i, j ) );
+        }*/
+        if( ( sigma( i, j ) > 0 ) && ( j - i ) > 3 ) {
             matches.add( new Tuple( i, j ) );
         }
     }
@@ -149,11 +192,9 @@ public class Nussinov {
      * The matches found are returned as a list of tuples, representing
      * entries to the DPmatrix.
      *
-     * @return a List of Tuples representing the matches found
+     * @return a List of Tuples representing the matches found.
      */
-    List<Tuple> getMatches() {
-        return matches;
-    }
+    List<Tuple> getMatches() { return matches; }
 
     /**
      * Translates the result of the DPmatrix to Dot-Bracket notation and
@@ -169,7 +210,7 @@ public class Nussinov {
     /**
      * Retrieves and returns a Dot-Bracket notation of the current sequence.
      *
-     * @return a Dot-Bracket notation of the sequence
+     * @return a Dot-Bracket notation of the sequence.
      */
     String getDotBracketOutput() {
         createDotBracket();
