@@ -33,7 +33,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-11
+ * April 21, 2018
  */
 
 public class Nussinov {
@@ -46,6 +46,9 @@ public class Nussinov {
 
     /** List of tuples to hold the entries to DPmatrix of the matches found */
     private List<Tuple> matches = new ArrayList<>();
+
+    /** Keeps track of the number of matches found */
+    private int matchesCount = 0;
 
 
     /**
@@ -109,11 +112,9 @@ public class Nussinov {
         char a = inputArray[i];
         char b = inputArray[j];
         if( ( a == 'C' && b == 'G' ) ||
-                ( a == 'G' && b == 'C' ) ||
-                ( a == 'A' && b == 'U' ) ||
-                ( a == 'U' && b == 'A' ) ||
-                ( a == 'G' && b == 'U' ) ||
-                ( a == 'U' && b == 'G' ) ) {
+            ( a == 'G' && b == 'C' ) ||
+            ( a == 'A' && b == 'U' ) ||
+            ( a == 'U' && b == 'A' ) ) {
             return 1;
         }
         // Outline for a way of adding weigth to scores
@@ -184,6 +185,7 @@ public class Nussinov {
         }*/
         if( ( sigma( i, j ) > 0 ) && ( j - i ) > 3 ) {
             matches.add( new Tuple( i, j ) );
+            matchesCount++;
         }
     }
 
@@ -195,6 +197,13 @@ public class Nussinov {
      * @return a List of Tuples representing the matches found.
      */
     List<Tuple> getMatches() { return matches; }
+
+    /**
+     * Returns the number of matches found by the Nussinov algorithm.
+     *
+     * @return the number of matches found as an int.
+     */
+    int getMatchesCount() { return matchesCount; }
 
     /**
      * Translates the result of the DPmatrix to Dot-Bracket notation and

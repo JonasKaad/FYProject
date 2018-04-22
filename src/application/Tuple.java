@@ -6,8 +6,8 @@ package application;
  * Department of Mathematics and Computer Science (IMADA),
  * University of Southern Denmark, Campusvej 55, 5230 Odense, Denmark
  *
- * This is a helper class to create tuples to represent ( i, j ) entries
- * to a matrix.
+ * This is a helper class to create tuples to represent tuples of information.
+ * For example entries ( i, j ) into a matrix or coordinates ( x, y ).
  *
  * @author Dennis Andersen              -- deand17
  * @author Marta Massa Gyldenkerne      -- magyl17
@@ -15,7 +15,7 @@ package application;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-16
+ * April 21, 2018
  */
 
 class Tuple {
@@ -44,21 +44,27 @@ class Tuple {
      *
      * @return the value of i of this tuple.
      */
-    int getI() {
-        return this.i;
-    }
+    int getI() { return this.i; }
 
     /**
      * Gets the value j of this tuple.
      *
      * @return the value of j of this tuple.
      */
-    int getJ() {
-        return this.j;
-    }
+    int getJ() { return this.j; }
 
+    /**
+     * Gets the value x of this tuple.
+     *
+     * @return the value of x of this tuple.
+     */
     double getX() { return this.x; }
 
+    /**
+     * Gets the value y of this tuple.
+     *
+     * @return the value of y of this tuple.
+     */
     double getY() { return this.y; }
 
 } // end class

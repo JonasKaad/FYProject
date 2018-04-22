@@ -17,7 +17,7 @@ import java.io.*;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-11
+ * April 21, 2018
  */
 
 public class LoadTextFile {

@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -24,7 +25,7 @@ import javafx.stage.Stage;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-11
+ * April 21, 2018
  */
 
 public class CloseBox {
@@ -52,15 +53,22 @@ public class CloseBox {
         label.setText( "Are you sure you want to exit the program?" );
         Button yesButton = new Button( "Yes" );
         Button noButton = new Button( "No" );
+        noButton.setCancelButton( true );
         yesButton.setMinSize( 75, 25 );
         noButton.setMinSize( 75, 25 );
 
-        yesButton.setOnAction( e -> {
+        yesButton.setOnKeyPressed( event -> {
+            if ( event.getCode().equals( KeyCode.ENTER ) ) {
+                answer = true;
+                stage.close();
+            }
+        } );
+        yesButton.setOnAction( event -> {
             answer = true;
             stage.close();
         } );
 
-        noButton.setOnAction( e -> {
+        noButton.setOnAction( event -> {
             answer = false;
             stage.close();
         } );

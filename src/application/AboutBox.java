@@ -5,6 +5,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -26,7 +28,7 @@ import javafx.stage.Stage;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * 2018-04-11
+ * April 22, 2018
  */
 
 public class AboutBox {
@@ -39,34 +41,73 @@ public class AboutBox {
         Stage stage = new Stage();
 
         stage.initModality( Modality.APPLICATION_MODAL );
-        stage.setTitle( "About StructVis" );
-        stage.setMinWidth( 250 );
-        stage.setMinHeight( 380 );
+        stage.setTitle( "About VSeq" );
+        stage.setMaxWidth( 250 );
+        stage.setMinHeight( 300 );
 
-        Label headerLabel = new Label( "Version:" );
-        headerLabel.setAlignment( Pos.CENTER );
-        Label versionLabel = new Label( "Whatever comes before pre-alpha" );
+        Label versionHeaderLabel = new Label( "Version:" );
+        versionHeaderLabel.setAlignment( Pos.CENTER );
+        Label versionLabel = new Label( "0.3" );
         versionLabel.setAlignment( Pos.CENTER );
 
         Button okButton = new Button( "OK" );
         okButton.setMinSize( 75, 25 );
 
-        okButton.setOnAction( e -> stage.close() );
+        okButton.setCancelButton( true );
+        okButton.setOnAction( event -> stage.close() );
+        okButton.setOnKeyPressed( event -> {
+            if ( event.getCode().equals( KeyCode.ENTER ) ) {
+                stage.close();
+            }
+        } );
 
         VBox layout = new VBox( 10 );
         layout.setPadding( new Insets( 5 ) );
+
+        VBox vBox = new VBox( 10 );
+        vBox.setAlignment( Pos.CENTER );
+
+        Label authorHeaderLabel = new Label( "Authors" );
+        authorHeaderLabel.setPadding( new Insets( 10, 5, 5, 5 ) );
+        authorHeaderLabel.setAlignment( Pos.CENTER );
+
+        vBox.getChildren().add( authorHeaderLabel );
+
+        GridPane g = new GridPane();
+        g.setPadding( new Insets( 0,0,20,0 ) );
+        Label firstAuthorLabel = new Label( "Dennis Andersen" );
+        firstAuthorLabel.setPadding( new Insets( 0,0,5,5 ) );
+        Label firstAuthorLabelExtra = new Label( "deand17" );
+        firstAuthorLabelExtra.setPadding( new Insets( 0,0,5,5 ) );
+        Label secondAuthorLabel = new Label( "Marta Masse Gyldenkerne" );
+        secondAuthorLabel.setPadding( new Insets( 0,0,5,5 ) );
+        Label secondAuthorLabelExtra = new Label( "magyl17" );
+        secondAuthorLabelExtra.setPadding( new Insets( 0,0,5,5 ) );
+        Label thirdAuthorLabel = new Label( "Arulmolibarman Muthukrishnan" );
+        thirdAuthorLabel.setPadding( new Insets( 0,0,5,5 ) );
+        Label thirdAuthorLabelExtra = new Label( "armut13" );
+        thirdAuthorLabelExtra.setPadding( new Insets( 0,0,5,5 ) );
+
+        g.add( firstAuthorLabel, 0, 0 );
+        g.add( firstAuthorLabelExtra, 1, 0 );
+        g.add( secondAuthorLabel, 0, 1 );
+        g.add( secondAuthorLabelExtra, 1, 1 );
+        g.add( thirdAuthorLabel, 0, 2 );
+        g.add( thirdAuthorLabelExtra, 1, 2 );
+
+        vBox.getChildren().add( g );
+
+        //Text text = new Text();
+        //text.setText( LoadTextFile.load( "help.txt" ) );
+        //text.setWrappingWidth( 250 );
 
         HBox hBox = new HBox();
         hBox.setPadding( new Insets( 5 ) );
         hBox.getChildren().add( okButton );
         hBox.setAlignment( Pos.CENTER );
 
-        Text text = new Text();
-        text.setText( LoadTextFile.load( "help.txt" ) );
-        text.setWrappingWidth( 250 );
-
         layout.setAlignment( Pos.CENTER );
-        layout.getChildren().addAll( text, headerLabel, versionLabel, hBox );
+        layout.getChildren().addAll( vBox, versionHeaderLabel, versionLabel, hBox );
 
         Scene scene = new Scene( layout );
         stage.setScene( scene );

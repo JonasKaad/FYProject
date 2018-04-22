@@ -1,5 +1,34 @@
 # FYProject
 
+April 22, 2018.
+
+The project has now been updated, with the application having gone through a major rework, such that it now more closely follows the ModelViewController pattern. The impact of these changes is most evident in the `main.java` file, which has now been split into `controller.java` and `view.java`, with the result being that the application has been completely restructured. The `controller` now manages all functionality and takes care of all inputs from the user. In addition, all clickables should now have functionality attached. The `view` contains the improvements upon the original layout code.
+
+Additional features have added as well and others improved upon. These include loading and reading of multiline FASTA files and movable visualizations; re-adding matrix and dot-bracket representations; listing of matches found and additional visual improvements.
+
+For a better overview of the major updates of this version, see the list below:
+
+* The entire application has been restructured to be more inline with the ModelViewController pattern.
+
+* Added loading of multiline FASTA files. However, please note that ONLY RNA FASTA files which contain the letters 'A, C, G, U' can be read. If files which contain the letter 'T' instead of 'U' are loaded, the application will filter out the 'T's, meaning an incomplete sequence will be processed and then visualized!
+
+* Added a result bar to the visualization area, which displays a list of the matches found. The result bar is both closable and movable. In addition, a header is shown when displaying the sequence computed. This header can be turned off.
+
+* Readded the matrix representation to the application. The matrix representation is now shown in a movable box, which can also be closed if desired.
+
+* Readded the dot-bracket representation to the application. The dot-bracket representation can also be turned off.
+
+* Improvements have been made to both sequence visualization and circle visualization. These improvements include:
+  * Both visualizations are now movable and zoomable.
+  * Matchlines are now colored, and sized more inline with the type of binding.
+  * Matchlines now overlap less often (sequence only).
+
+TL;DR Moar update moar better! 🤘
+
+*- Dennis*
+
+---
+
 April 18, 2018.
 
 As mentioned previously, the intention is to update this `README` as the project progresses. It is also a good place to keep a changelog or ideas.
