@@ -13,6 +13,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -37,7 +39,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 22, 2018
+ * April 23, 2018
  */
 
 public class Controller {
@@ -57,6 +59,7 @@ public class Controller {
     private int tabHeaderContainerCount = 0;
     private int tabInfoContainerCount = 0;
     private int tabBracketContainerCount = 0;
+
 
     /**
      * Constructor
@@ -82,6 +85,7 @@ public class Controller {
             computeSequence( view.inputSequence.getText(), "" )
         );
     }
+
 
     /** Associates functionality with the checkboxes in the view. */
     private void assignCheckBoxEvents() {
@@ -148,9 +152,16 @@ public class Controller {
 
     }
 
+
     /** Associates functionality with the menuitems in the view. */
     private void assignMenuEvents() {
         /* ****************** assign functionality to fileMenuItems ******************* */
+        view.open.setAccelerator( new KeyCodeCombination(
+                KeyCode.O,
+                KeyCombination.CONTROL_DOWN,
+                KeyCombination.SHORTCUT_DOWN
+        ) );
+
         view.open.setOnAction( event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle( "Open File" );
@@ -245,6 +256,7 @@ public class Controller {
 
     }
 
+
     /** Associates other functionality */
     private void assignShortcutEvents() {
         view.inputSequence.setOnKeyPressed( event -> {
@@ -253,6 +265,7 @@ public class Controller {
             }
         } );
     }
+
 
     /**
      * Initiate the computation of the sequence entered in the inputTextField
@@ -276,8 +289,10 @@ public class Controller {
         // TODO 'T' characters.
         char[] chars = str.toCharArray();
         for ( char c : chars ) {
-            if ( c == 'A' || c == 'C' || c == 'G' || c == 'U' ) {
+            if ( c == 'A' || c == 'C' || c == 'G' ) {
                 stringBuilder.append( c );
+            } else if ( c == 'U' || c == 'T' ) {
+                stringBuilder.append( 'U' );
             }
         }
         str = stringBuilder.toString();
@@ -363,7 +378,7 @@ public class Controller {
         int length = sequence.length();
         double width, height;
 
-        // sets a scaler to adjust the size of the radius based on the input length of the string
+        // sets a scalar to adjust the size of the radius based on the input length of the string
         if ( length < 10 ) {
             width = ( ( length * 40 ) + 36 );
             height = ( 30 + ( length * 10 ) + 36 ) * 0.7;
@@ -401,7 +416,7 @@ public class Controller {
         int length = sequence.length();
         double size;
 
-        // sets a scaler to adjust the size of the radius based on the input length of the string
+        // sets a scalar to adjust the size of the radius based on the input length of the string
         if ( length < 10 ) {
             size = ( ( length * 30 ) + 36 );
         } else if ( length < 25 ) {
@@ -608,7 +623,7 @@ public class Controller {
             Label leftGraphicsLabel = new Label();
             Label middleGraphicsLabel = new Label();
             Label rightGraphicsLabel = new Label();
-            Label matchLabel = new Label( "(" + i + "," + j + ")" );
+            Label matchLabel = new Label( "(" + ( i + 1 ) + "," + ( j + 1 ) + ")" );
             matchLabel.setFont( Font.font( 16 ) );
             matchLabel.setAlignment( Pos.CENTER );
             matchLabel.setPrefWidth( 75 );

@@ -31,7 +31,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 22, 2018
+ * April 23, 2018
  */
 
 public class View extends BorderPane {
@@ -100,7 +100,7 @@ public class View extends BorderPane {
         header.setPadding( new Insets( 10, 0, 5, 50 ) );
         header.setFont( Font.font( "", FontWeight.BLACK, 22 ) );
 
-        Label subHeader = new Label( "A RNA sequence structure prediction and visualization tool" );
+        Label subHeader = new Label( "An RNA sequence structure prediction and visualization tool" );
         subHeader.setPadding( new Insets( 10, 0, 5, 50 ) );
         subHeader.setFont( Font.font( "", FontWeight.BOLD, 18 ) );
 
@@ -197,9 +197,9 @@ public class View extends BorderPane {
         menuBar = new MenuBar();
 
         // creates various panes for the menuBar
-        fileMenu = new Menu( "File" );
-        viewMenu = new Menu( "View" );
-        helpMenu = new Menu( "Help" );
+        fileMenu = new Menu( "_File" );
+        viewMenu = new Menu( "_View" );
+        helpMenu = new Menu( "_Help" );
 
         // populates the various menu panes of the menuBar
         for ( MenuItem item : fileMenuItems() ) {
@@ -224,9 +224,9 @@ public class View extends BorderPane {
         List<MenuItem> items = new ArrayList<>();
 
         // creates the contents, i.e. items in a menu
-        open = new MenuItem("Open");
+        open = new MenuItem("_Open");
         MenuItem separator = new SeparatorMenuItem();
-        exit = new MenuItem("Exit");
+        exit = new MenuItem("E_xit");
 
         items.add( open );
         items.add( separator );
@@ -244,7 +244,7 @@ public class View extends BorderPane {
         List<MenuItem> items = new ArrayList<>();
 
         // creates the contents, i.e. items in a menu
-        about = new MenuItem("About");
+        about = new MenuItem("_About");
 
         items.add( about );
 
@@ -260,10 +260,10 @@ public class View extends BorderPane {
         List<MenuItem> items = new ArrayList<>();
 
         // creates the contents, i.e. items in a menu
-        showTabHeader = new CheckMenuItem("Show Seqence Name");
+        showTabHeader = new CheckMenuItem("Show Seqence _Name");
         showTabHeader.setSelected( true );
 
-        showTabInfoBox = new CheckMenuItem("Show Seqence Description");
+        showTabInfoBox = new CheckMenuItem("Show Seqence _Description");
         showTabInfoBox.setSelected( true );
 
         items.add(showTabHeader);
