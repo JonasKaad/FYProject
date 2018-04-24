@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,7 +36,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 23, 2018
+ * April 24, 2018
  */
 
 public class Controller {
@@ -282,24 +279,28 @@ public class Controller {
         long executionStart = System.currentTimeMillis();
         StringBuilder stringBuilder = new StringBuilder();
 
+        // check length of sequence. If too long, the canvas textures generated become too large
+        // for JavaFX to handle. This check shows an error to the user, if the input sequence is
+        // too large.
+        boolean flag = checkSequenceLength( str );
+        if ( !flag ) {
+            return;
+        }
+
         // trim the input sequence
         str = str.toUpperCase();
-        // TODO To read real FASTA files, both the algorithm and the trimming
-        // TODO of input sequences made here, need to be adjusted to recognize
-        // TODO 'T' characters.
-        char[] chars = str.toCharArray();
-        for ( char c : chars ) {
-            if ( c == 'A' || c == 'C' || c == 'G' ) {
-                stringBuilder.append( c );
-            } else if ( c == 'U' || c == 'T' ) {
+        for (int i = 0; i < str.length(); i++) {
+            if ( str.charAt(i) == 'A' || str.charAt(i) == 'C' || str.charAt(i) == 'G' ) {
+                stringBuilder.append( str.charAt(i) );
+            } else if ( str.charAt(i) == 'U' || str.charAt(i) == 'T' ) {
                 stringBuilder.append( 'U' );
             }
         }
         str = stringBuilder.toString();
+        char[] chars = str.toCharArray();
 
-        // TODO If view.inputSequence is empty, we return and do nothing.
-        // TODO It would perhaps be a good idea to offer some feedback or
-        // TODO perhaps a tooltip to the user of what they could do.
+        // we check whether the trimmed input sequence is empty. If it is empty we return and do
+        // nothing, otherwise the computation begins.
         if ( str.isEmpty() ) { return; }
 
         // start an instance of the Nussinov Algorithm to compute the input sequence
@@ -333,6 +334,7 @@ public class Controller {
             tabHeaderContainer.setVisible( false );
         }
 
+        // create the infoBox
         MovableContainer tabInfoContainer = createTabInfoBox( nussinov.getMatches(), chars );
         tabInfoContainer.setId( "TabInfoBox" + ++tabInfoContainerCount );
         tabInfoContainers.add( tabInfoContainer );
@@ -340,10 +342,12 @@ public class Controller {
             tabInfoContainer.setVisible( false );
         }
 
+        // create dot-bracket bar
         VBox dotBracketContainer = createDotBracket( str, nussinov.getDotBracketOutput() );
         dotBracketContainer.setId( "TabBrack" + ++tabBracketContainerCount);
         tabVBoxContainers.add( dotBracketContainer );
 
+        // assemble results
         StackPane resultTabStackPane = new StackPane();
         resultTabStackPane.setAlignment( Pos.TOP_LEFT );
         resultTabStackPane.setStyle( "-fx-background-color: whitesmoke" );
@@ -355,15 +359,69 @@ public class Controller {
         VBox vBox = new VBox();
         vBox.getChildren().addAll( resultTabStackPane );
 
+        // put results in a tab
         Tab tab = new Tab();
         tab.setText( "New " + ++tabsCreated );
         tab.setContent( vBox );
 
+        // show tab in view
         view.mainTabPane.getTabs().add( tab );
         view.mainTabPane.getSelectionModel().select( tab );
 
         long executionEnd = System.currentTimeMillis() - executionStart;
         view.bottomInfoLabel.setText( "Computed sequence in " + ( executionEnd / 1000d ) + " s." );
+    }
+
+    /**
+     * Institutes a check of the input sequence length.
+     * If the sequence length is less than 250 characters, everything can be
+     * rendered, and we return true.
+     * If the sequence length is between 250 and 500 characters, only the
+     * sequence visualization and the dot-bracket output can be rendered. If
+     * the circle or matrix representations are selected, the application will
+     * show an error.
+     * If the sequence length is longer than 500 characters, only the list of
+     * results computed can be shown. However,
+     *
+     * @param str the input sequence
+     * @return true if the sequence can be computed, and false otherwise.
+     */
+    private boolean checkSequenceLength( String str ) {
+
+        if ( str.length() <= 250 ) {
+            return true;
+        } else if ( str.length() <= 500 ) {
+            if ( view.circleCheckBox.isSelected() || view.matrixCheckBox.isSelected() ) {
+                Alert alert = new Alert( Alert.AlertType.ERROR );
+                alert.setTitle( "Sequence Length Error" );
+                alert.setHeaderText( "Sequence too large" );
+                alert.setContentText( "Unfortunately, the sequence length is too large to be visualized. Try turning some of the visualization options off." );
+                alert.showAndWait();
+                return false;
+            } else {
+                return true;
+            }
+        } else if ( str.length() <= 10000 ) {
+            if ( !view.sequenceCheckBox.isSelected()   &&
+                 !view.circleCheckBox.isSelected()     &&
+                 !view.dotBracketCheckBox.isSelected() &&
+                 !view.matrixCheckBox.isSelected() ) {
+                return true;
+            } else {
+                Alert alert = new Alert( Alert.AlertType.ERROR );
+                alert.setTitle( "Sequence Length Error" );
+                alert.setHeaderText( "Sequence too large" );
+                alert.setContentText( "Unfortunately, the sequence length is too large to be visualized. Try turning some of the visualization options off." );
+                alert.showAndWait();
+            }
+        } else {
+            Alert alert = new Alert( Alert.AlertType.ERROR );
+            alert.setTitle( "Sequence Length Error" );
+            alert.setHeaderText( "Sequence too large" );
+            alert.setContentText( "Unfortunately, the sequence length is too large to be computed" );
+            alert.showAndWait();
+        }
+        return false;
     }
 
 
@@ -485,9 +543,6 @@ public class Controller {
                 label.setAlignment( Pos.CENTER );
                 if( y == 0 && x == 0 ) {
                     label.setText( "" );
-                    // if we want to color to top left corner (cell). Otherwise it is empty / blank
-                    //Background background = new Background( new BackgroundFill( Paint.valueOf( "#2E2E2E" ), null, null ) );
-                    //l.setBackground( background );
                 } else if( y == 0 ) {
                     label.setText( String.valueOf( charArray[x - 1] ).toUpperCase() );
                 } else if( x == 0 ) {
@@ -499,12 +554,10 @@ public class Controller {
                 // iterate the index using the loops
                 grid.setRowIndex( label, y );
                 grid.setColumnIndex( label, x );
-                //labelGrid.add( label );
                 grid.getChildren().add( label );
             }
         }
         // Shows the matrix representation in a grid.
-        // Maybe this could perhaps be a toggle-able option?
         grid.setGridLinesVisible( true );
 
         root.setMaxSize( grid.getWidth(), grid.getHeight() );
@@ -575,7 +628,6 @@ public class Controller {
         DropShadow dropShadow = Visualize.createShadowEffect();
 
         MovableContainer root = new MovableContainer();
-        //root.setSpacing( 10 );
         root.setPadding( new Insets( 5 ) );
         root.setTranslateX( 10 );
         root.setTranslateY( 85 );
@@ -601,20 +653,43 @@ public class Controller {
 
         anchorPane.getChildren().addAll( resultsLabel, closeLabel );
 
-        //Label tabInfoLabel = new Label( "Some more text, just to see how this looks." );
-        //Label tabInfoLabel = new Label();
-        //tabInfoLabel.setFont( Font.font( 16 ) );
-        //tabInfoLabel.setWrapText( true );
+        VBox overviewContainer = new VBox();
+
+        GridPane overview = new GridPane();
+
+        Label sequenceLengthLabel = new Label( "Sequence Length:" );
+        sequenceLengthLabel.setFont( Font.font( 14 ) );
         //tabInfoLabel.setStyle( "-fx-background-color: whitesmoke" ); // -fx-border-color: lightgrey;
 
-        //Label listViewHeaderLabel = new Label( "Matches Found" );
-        //listViewHeaderLabel.setMinWidth( 180 );
-        //listViewHeaderLabel.setTranslateY( 10 );
-        //listViewHeaderLabel.setAlignment( Pos.CENTER );
+        Label sequenceLengthCountLabel = new Label(  String.valueOf( chars.length ) );
+        sequenceLengthCountLabel.setMinWidth( 45 );
+        sequenceLengthCountLabel.setFont( Font.font( 16 ) );
+        sequenceLengthCountLabel.setAlignment( Pos.CENTER_RIGHT );
+
+        Label matchesLabel = new Label( "Number of Matches:" );
+        matchesLabel.setFont( Font.font( 14 ) );
+
+        Label matchesCountLabel = new Label(  String.valueOf( matches.size() ) );
+        matchesCountLabel.setMinWidth( 45 );
+        matchesCountLabel.setFont( Font.font( 16 ) );
+        matchesCountLabel.setAlignment( Pos.CENTER_RIGHT );
+
+        overview.add( sequenceLengthLabel, 0, 0 );
+        overview.add( sequenceLengthCountLabel, 1, 0 );
+        overview.add( matchesLabel, 0, 1 );
+        overview.add( matchesCountLabel, 1, 1 );
+
+        Label listViewHeaderLabel = new Label( "Matches Found" );
+        listViewHeaderLabel.setMinWidth( 180 );
+        listViewHeaderLabel.setMinHeight( 40 );
+        listViewHeaderLabel.setAlignment( Pos.BOTTOM_CENTER );
 
         matchesListView.setPrefSize( 180, 450 );
+        VBox.setVgrow( matchesListView, Priority.SOMETIMES );
 
         int i, j;
+        int dbindings = 0;
+        int tbindings = 0;
         for ( Tuple t : matches ) {
             GridPane g = new GridPane();
             i = t.getI();
@@ -632,33 +707,57 @@ public class Controller {
                 leftGraphicsLabel.setGraphic( new ImageView( images[0] ) );
                 middleGraphicsLabel.setGraphic( new ImageView( images[4] ) );
                 rightGraphicsLabel.setGraphic( new ImageView( images[3] ) );
+                dbindings++;
             } else if ( chars[i] == 'C' ) {
                 leftGraphicsLabel.setGraphic( new ImageView( images[1] ) );
                 middleGraphicsLabel.setGraphic( new ImageView( images[5] ) );
                 rightGraphicsLabel.setGraphic( new ImageView( images[2] ) );
+                tbindings++;
             } else if ( chars[i] == 'G' ) {
                 leftGraphicsLabel.setGraphic( new ImageView( images[2] ) );
                 middleGraphicsLabel.setGraphic( new ImageView( images[5] ) );
                 rightGraphicsLabel.setGraphic( new ImageView( images[1] ) );
+                tbindings++;
             } else if ( chars[i] == 'U' ) {
                 leftGraphicsLabel.setGraphic( new ImageView( images[3] ) );
                 middleGraphicsLabel.setGraphic( new ImageView( images[4] ) );
                 rightGraphicsLabel.setGraphic( new ImageView( images[0] ) );
+                dbindings++;
             }
-
             g.add( leftGraphicsLabel, 0 , 0 );
             g.add( middleGraphicsLabel, 1 , 0 );
             g.add( rightGraphicsLabel, 2 , 0 );
             g.add( matchLabel, 3, 0 );
 
             matchesListViewItems.add( g );
+        }
 
-        } // end of tuple for loop
+        Label dbindingsLabel = new Label( "Double Bindings:" );
+        dbindingsLabel.setFont( Font.font( 14 ) );
+
+        Label dbindingsCountLabel = new Label(  String.valueOf( dbindings ) );
+        dbindingsCountLabel.setMinWidth( 45 );
+        dbindingsCountLabel.setFont( Font.font( 16 ) );
+        dbindingsCountLabel.setAlignment( Pos.CENTER_RIGHT );
+
+        Label tbindingsLabel = new Label( "Triple Bindings:" );
+        tbindingsLabel.setFont( Font.font( 14 ) );
+
+        Label tbindingsCountLabel = new Label(  String.valueOf( tbindings ) );
+        tbindingsCountLabel.setMinWidth( 45 );
+        tbindingsCountLabel.setFont( Font.font( 16 ) );
+        tbindingsCountLabel.setAlignment( Pos.CENTER_RIGHT );
+
+        overview.add( dbindingsLabel, 0, 2 );
+        overview.add( dbindingsCountLabel, 1, 2 );
+        overview.add( tbindingsLabel, 0, 3 );
+        overview.add( tbindingsCountLabel, 1, 3 );
+
+        overviewContainer.getChildren().add( overview );
 
         matchesListView.setItems( matchesListViewItems );
-
-        //root.getChildren().addAll( anchorPane, listViewHeaderLabel, matchesListView );
-        root.getChildren().addAll( anchorPane, matchesListView );
+        
+        root.getChildren().addAll( anchorPane, overviewContainer, listViewHeaderLabel, matchesListView );
 
         return root;
     }

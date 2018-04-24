@@ -1,0 +1,22 @@
+
+Latest update:
+
+April 22, 2018 - Major updates for this version include:
+
+- The entire application has been restructured to be more inline with the ModelViewController pattern.
+
+- Added loading of multiline FASTA files. Please note that when loading FASTA files which contain sequences using the letters 'A', 'C', 'G' and 'T' the application will replace all occurrences of the letter 'T' with the letter 'U'.
+
+- Added a result bar to the visualization area, which displays a list of the matches found. The result bar is both closable and movable. In addition, a header is shown when displaying the sequence computed. This header can be turned off.
+
+- Readded the matrix representation to the application. The matrix representation is now shown in a movable box, which can also be closed if desired.
+
+- Readded the dot-bracket representation to the application. The dot-bracket representation can also be turned off.
+
+- Improvements have been made to both sequence visualization and circle visualization. These improvements include:
+        - Both visualizations are now movable and zoomable.
+        - Matchlines are now colored, and sized more inline with the type of binding.
+        - Matchlines now overlap less often (sequence only).
+        
+        
+        

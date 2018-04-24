@@ -31,7 +31,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 23, 2018
+ * April 24, 2018
  */
 
 public class View extends BorderPane {
@@ -85,29 +85,32 @@ public class View extends BorderPane {
      */
     private TabPane createCenterPane() {
         mainTabPane = new TabPane();
+        mainTabPane.setCache( true );
 
         Tab tab = new Tab();
         tab.setText( "Welcome" );
 
-        VBox root = new VBox();
-        root.setAlignment( Pos.TOP_CENTER );
+        ScrollPane root = new ScrollPane();
+        root.setFitToWidth( true );
+
+        VBox mainContainer = new VBox();
+        mainContainer.setAlignment( Pos.TOP_CENTER );
 
         VBox headerContainer = new VBox();
         headerContainer.setPadding( new Insets( 10, 10, 10, 10 ) );
-        headerContainer.setMaxWidth( 600 );
+        headerContainer.setMaxWidth( 800 );
 
-        Label header = new Label( "Welcome to VSeq" );
+        Label header = new Label( "Project 78 - Sequence Structure Prediction using Java." );
         header.setPadding( new Insets( 10, 0, 5, 50 ) );
         header.setFont( Font.font( "", FontWeight.BLACK, 22 ) );
 
-        Label subHeader = new Label( "An RNA sequence structure prediction and visualization tool" );
+        Label subHeader = new Label( "By Dennis Andersen, Marta Massa Gyldenkerne and Arulmolibarman Muthukrishnan." );
         subHeader.setPadding( new Insets( 10, 0, 5, 50 ) );
-        subHeader.setFont( Font.font( "", FontWeight.BOLD, 18 ) );
+        subHeader.setFont( Font.font( "", FontWeight.BOLD, 16 ) );
 
-        Line line = new Line( 212, 100, 812, 100 );
+        Line line = new Line( 122, 100, 902, 100 );
         line.setStroke( Color.valueOf( "2f4f4f" ) );
         line.setStrokeWidth( 3 );
-
 
         headerContainer.getChildren().addAll(
                 header,
@@ -116,14 +119,25 @@ public class View extends BorderPane {
         );
 
         VBox contentContainer = new VBox();
-        contentContainer.setMaxWidth( 800 );
+        contentContainer.setMaxWidth( 980 );
         contentContainer.setPadding( new Insets( 10, 0, 10, 0 ) );
         contentContainer.setAlignment( Pos.TOP_CENTER );
+
         Text welcomeText = new Text( LoadTextFile.load( "welcome.txt" ) );
-        welcomeText.setWrappingWidth( 800 );
-        welcomeText.setFont( Font.font( 14 ) );
-        contentContainer.getChildren().add( welcomeText );
-        root.getChildren().addAll( headerContainer, contentContainer );
+        welcomeText.setWrappingWidth( 980 );
+        welcomeText.setFont( Font.font( 16 ) );
+
+        Line sectionSep = new Line( 22, 390, 1002, 390 );
+        sectionSep.setStroke( Color.valueOf( "2f4f4f" ) );
+        sectionSep.setStrokeWidth( 2 );
+
+        Text updateText = new Text( LoadTextFile.load( "updates.txt" ) );
+        updateText.setWrappingWidth( 980 );
+        updateText.setFont( Font.font( 16 ) );
+
+        contentContainer.getChildren().addAll( welcomeText, sectionSep, updateText );
+        mainContainer.getChildren().addAll( headerContainer, contentContainer );
+        root.setContent( mainContainer );
 
         tab.setContent( root );
         mainTabPane.getTabs().add( tab );

@@ -1,19 +1,19 @@
-Welcome to the alpha version of the application for the first year project 78 - Sequence Structure Prediction using Java.
+Welcome to our RNA sequence structure prediction and visualization tool.
 
 
-April 22, 2018 - Major updates for this version include:
+This application was created as our first year project at IMADA, University of Southern Denmark 2018.
 
-- The entire application has been restructured to be more inline with the ModelViewController pattern.
+The background for this application, lies in the problem of predicting secondary structures of RNA sequences. RNA sequences are single
+stranded sequences, which have a tendency to fold onto themselves forming both secondary and tertiary structures, and these structures 
+highly influence the function of the molecule.
 
-- Added loading of multiline FASTA files. However, please note that ONLY RNA FASTA files which contain the letters 'A, C, G, U' can be read. If files which contain the letter 'T' instead of 'U' are loaded, the application will filter out the 'T's, meaning an incomplete sequence will be processed and then visualized!
+Our aim with this application was to take a structure prediction / folding algorithm and apply it to the problem of predicting 
+secondary structures, and then visualize the resulting molecule to the user in a simple user interface. The application is therefore 
+aimed at users with an experience level equalling gymnasium students and perhaps also relevant for first year biomedicine students.
 
-- Added a result bar to the visualization area, which displays a list of the matches found. The result bar is both closable and movable. In addition, a header is shown when displaying the sequence computed. This header can be turned off.
-
-- Readded the matrix representation to the application. The matrix representation is now shown in a movable box, which can also be closed if desired.
-
-- Readded the dot-bracket representation to the application. The dot-bracket representation can also be turned off.
-
-- Improvements have been made to both sequence visualization and circle visualization. These improvements include:
-        - Both visualizations are now movable and zoomable.
-        - Matchlines are now colored, and sized more inline with the type of binding.
-        - Matchlines now overlap less often (sequence only).
+In designing the application, for the prediction problem, we chose the Nussinov algorithm, an algorithm developed by Ruth Nussinov and 
+co-workers in 1978 (SIAM J Appl Math 35, 68-81) that uses dynamic programming to try and solve the problem of RNA secondary structure 
+prediction. We then used the results computed by the Nussinov algorithm to generate various visual representations of the results. Most 
+notable is the circle representation, which lays out the sequence in a circle, with the bonds formed by the molecule shown as lines 
+connecting across the inside of the circle. This representation is accompanied by a simple sequence representation, as well as a 
+dot-bracket notation. Lastly, the dynamically programmed matrix can be shown, such that the results computed can be seen.

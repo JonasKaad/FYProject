@@ -10,7 +10,7 @@ For a better overview of the major updates of this version, see the list below:
 
 * The entire application has been restructured to be more inline with the ModelViewController pattern.
 
-* Added loading of multiline FASTA files. However, please note that ONLY RNA FASTA files which contain the letters 'A, C, G, U' can be read. If files which contain the letter 'T' instead of 'U' are loaded, the application will filter out the 'T's, meaning an incomplete sequence will be processed and then visualized!
+* Added loading of multiline FASTA files. Please note that when loading FASTA files which contain sequences using the letters 'A', 'C', 'G' and 'T' the application will replace all occurrences of the letter 'T' with the letter 'U'.
 
 * Added a result bar to the visualization area, which displays a list of the matches found. The result bar is both closable and movable. In addition, a header is shown when displaying the sequence computed. This header can be turned off.
 
