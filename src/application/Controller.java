@@ -756,7 +756,7 @@ public class Controller {
         overviewContainer.getChildren().add( overview );
 
         matchesListView.setItems( matchesListViewItems );
-        
+
         root.getChildren().addAll( anchorPane, overviewContainer, listViewHeaderLabel, matchesListView );
 
         return root;
