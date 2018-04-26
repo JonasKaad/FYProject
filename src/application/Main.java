@@ -37,7 +37,7 @@ public class Main extends Application {
     @Override
     public void start( Stage stage ) throws Exception {
         primaryStage = stage;
-        primaryStage.setTitle( "VSeq" );
+        primaryStage.setTitle( "Strucvis" );
 
         View view = new View();
         Scene scene = new Scene( view, 1024, 768 );

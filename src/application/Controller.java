@@ -395,7 +395,7 @@ public class Controller {
                 Alert alert = new Alert( Alert.AlertType.ERROR );
                 alert.setTitle( "Sequence Length Error" );
                 alert.setHeaderText( "Sequence too large" );
-                alert.setContentText( "Unfortunately, the sequence length is too large to be visualized. Try turning some of the visualization options off." );
+                alert.setContentText( "The circle, matrix and dot-bracket options cannot be visualized with input sequences greater than 250 characters. Try selecting only the 'Sequence' option, or try a shorter sequence." );
                 alert.showAndWait();
                 return false;
             } else {
@@ -411,7 +411,7 @@ public class Controller {
                 Alert alert = new Alert( Alert.AlertType.ERROR );
                 alert.setTitle( "Sequence Length Error" );
                 alert.setHeaderText( "Sequence too large" );
-                alert.setContentText( "Unfortunately, the sequence length is too large to be visualized. Try turning some of the visualization options off." );
+                alert.setContentText( "Unfortunately, the sequence length is too large to be visualized. However, if you turn the visualization options off, you can still get some info on the sequence." );
                 alert.showAndWait();
             }
         } else {

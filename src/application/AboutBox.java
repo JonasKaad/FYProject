@@ -41,7 +41,7 @@ public class AboutBox {
         Stage stage = new Stage();
 
         stage.initModality( Modality.APPLICATION_MODAL );
-        stage.setTitle( "About VSeq" );
+        stage.setTitle( "About Strucvis" );
         stage.setMaxWidth( 250 );
         stage.setMinHeight( 300 );
 
