@@ -1,0 +1,103 @@
+/**
+ * FF501 First Year Project - 78 - Sequence Structure Prediction Using Java
+ *
+ * Department of Mathematics and Computer Science (IMADA),
+ * University of Southern Denmark, Campusvej 55, 5230 Odense, Denmark
+ *
+ * This is a style class for the application.
+ *
+ *
+ * @author Dennis Andersen              -- deand17
+ * @author Marta Massa Gyldenkerne      -- magyl17
+ * @author Arulmolibarman Muthukrishnan -- armut13
+ *
+ * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
+ *
+ * May 16, 2018
+ */
+
+.tooltip{
+    -fx-padding: 0 7 0 7;
+    -fx-border-width: 1;
+    -fx-border-color: grey;
+    -fx-border-radius: 3 3 3 3;
+    -fx-background-radius: 3 3 3 3;
+    -fx-background-color: whitesmoke;
+    -fx-font-size: 10pt;
+    -fx-text-fill: Black
+}
+
+.combo-box{
+    -fx-border-color: lightgrey;
+    -fx-background-color: white;
+    -fx-effect: innershadow( three-pass-box, lightgrey, 3.0, 0.0, 0.0, 2.0 );
+    -fx-border-radius: 0 3 3 0;
+    -fx-background-radius: 0 3 3 0;
+}
+
+.combo-box:focused{
+    -fx-effect: innershadow( three-pass-box, #0093ef, 6.0, 0.0, 0.0, 0.0 );
+    -fx-background-color: white;
+    -fx-background-insets: 0, 1;
+}
+
+.top-textfield{
+    -fx-border-color: lightgrey;
+    -fx-border-radius: 3 0 0 3;
+    -fx-background-radius: 3 0 0 3;
+}
+
+.top-textfield:focused{
+    -fx-effect: innershadow( three-pass-box, #0093ef, 6.0, 0.0, 0.0, 0.0 );
+    -fx-background-color: white;
+    -fx-background-insets: 0 1 0 0;
+}
+
+.tab-textfield{
+    -fx-border-color: lightgrey;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.tab-textfield:hover{
+    -fx-border-color: darkslategray;
+    -fx-border-width: 3;
+    -fx-background-color: white;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.tab-textfield:focused{
+    -fx-border-color: darkslategray;
+    -fx-border-width: 3;
+    -fx-background-color: white;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.tablabel{
+    -fx-border-color: lightgrey;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.tablabel:hover{
+    -fx-border-color: darkslategray;
+    -fx-border-width: 3;
+    -fx-background-color: white;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+}
+
+.tablabel:pressed{
+    -fx-border-color: darkslategray;
+    -fx-border-width: 3;
+    -fx-background-color: darkslategray;
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}

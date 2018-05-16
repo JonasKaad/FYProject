@@ -28,7 +28,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 22, 2018
+ * May 16, 2018
  */
 
 public class Visualize {
@@ -40,9 +40,6 @@ public class Visualize {
      * @param matches  a list of tuples containing the matches found.
      */
     static void drawSequence( GraphicsContext gc, String sequence, List<Tuple> matches, double width, double height ) {
-        // try to retrieve system information, to set a monospace font
-        getSystemInfo();
-
         double xShift, x1, y1, x2, y2, x3, y3;
         char[] chars = sequence.toCharArray();
         int length = chars.length;
@@ -95,7 +92,6 @@ public class Visualize {
 
             // on last iteration of loop, we compute and draw lines for matches
             if ( i == length ) {
-                int z = 0;
                 for ( Tuple t : matches ) {
                     // draw lines between matches
                     x1 = nodeCoordinates[t.getI()].getX();
@@ -103,21 +99,35 @@ public class Visualize {
                     x2 = nodeCoordinates[t.getJ()].getX();
                     y2 = nodeCoordinates[t.getJ()].getY();
                     x3 = x1 + ( ( x2 - x1 ) / 2 );
-                    if ( chars[t.getI()] == 'A' || chars[t.getI()] == 'U' ) {
+                    y3 = ( x2 - x1 ) / 2;
+                    if ( chars[t.getI()] == 'A' ) {
                         gc.setStroke( Color.valueOf( "00aeef" ) );
                         gc.setLineWidth( gc.getLineWidth() + 0.3 );
-                    } else if ( chars[t.getI()] == 'G' || chars[t.getI()] == 'C' ) {
+                    } else if ( chars[t.getI()] == 'C' ) {
                         gc.setStroke( Color.valueOf( "5c5cf9" ) );
                         gc.setLineWidth( gc.getLineWidth() + 1 );
+                    } else if ( chars[t.getI()] == 'G' ) {
+                        if ( chars[t.getJ()] == 'C' ) {
+                            gc.setStroke( Color.valueOf( "5c5cf9" ) );
+                            gc.setLineWidth( gc.getLineWidth() + 1 );
+                        } else if ( chars[t.getJ()] == 'U' ) {
+                            gc.setStroke( Color.valueOf( "ec7fd1" ) );
+                        }
+                    } else if ( chars[t.getI()] == 'U' ) {
+                        if ( chars[t.getJ()] == 'A' ) {
+                            gc.setStroke( Color.valueOf( "00aeef" ) );
+                            gc.setLineWidth( gc.getLineWidth() + 0.3 );
+                        } else if ( chars[t.getJ()] == 'G' ) {
+                            gc.setStroke( Color.valueOf( "ec7fd1" ) );
+                        }
                     }
                     gc.setLineWidth( 1.5 );
                     gc.beginPath();
-                    gc.moveTo(x1, y1);
-                    gc.quadraticCurveTo( x3, ( 40 + ( length * 10 ) ) - z, x2, y2 );
+                    gc.moveTo( x1, y1 );
+                    gc.quadraticCurveTo( x3, 40 + y3, x2, y2 );
                     gc.stroke();
                     gc.closePath();
                     gc.setLineWidth( lineWidth );
-                    z += 30;
                 }
             }
         }
@@ -155,9 +165,6 @@ public class Visualize {
      * @param height        height of the Canvas.
      */
     static void drawCircleRep( GraphicsContext gc, String inputSequence, List<Tuple> matches, double width, double height ) {
-        // try to retrieve system information, to set a monospace font
-        getSystemInfo();
-
         String sequence = inputSequence;
         Image[] images = loadImageResources( sequence.length() );
 
@@ -283,15 +290,29 @@ public class Visualize {
                     y1 = nodeCoordinates[t.getI()].getY();
                     x2 = nodeCoordinates[t.getJ()].getX();
                     y2 = nodeCoordinates[t.getJ()].getY();
-                    if ( chars[t.getI()] == 'A' || chars[t.getI()] == 'U' ) {
+                    if ( chars[t.getI()] == 'A' ) {
                         gc.setStroke( Color.valueOf( "00aeef" ) );
                         gc.setLineWidth( gc.getLineWidth() + 0.3 );
-                    } else if ( chars[t.getI()] == 'G' || chars[t.getI()] == 'C' ) {
+                    } else if ( chars[t.getI()] == 'C' ) {
                         gc.setStroke( Color.valueOf( "5c5cf9" ) );
                         gc.setLineWidth( gc.getLineWidth() + 1 );
+                    } else if ( chars[t.getI()] == 'G' ) {
+                        if ( chars[t.getJ()] == 'C' ) {
+                            gc.setStroke( Color.valueOf( "5c5cf9" ) );
+                            gc.setLineWidth( gc.getLineWidth() + 1 );
+                        } else if ( chars[t.getJ()] == 'U' ) {
+                            gc.setStroke( Color.valueOf( "ec7fd1" ) );
+                        }
+                    } else if ( chars[t.getI()] == 'U' ) {
+                        if ( chars[t.getJ()] == 'A' ) {
+                            gc.setStroke( Color.valueOf( "00aeef" ) );
+                            gc.setLineWidth( gc.getLineWidth() + 0.3 );
+                        } else if ( chars[t.getJ()] == 'G' ) {
+                            gc.setStroke( Color.valueOf( "ec7fd1" ) );
+                        }
                     }
                     gc.beginPath();
-                    gc.moveTo(x1, y1);
+                    gc.moveTo( x1, y1 );
                     gc.quadraticCurveTo( width / 2, height / 2, x2, y2 );
                     gc.stroke();
                     gc.closePath();

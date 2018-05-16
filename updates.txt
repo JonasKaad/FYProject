@@ -1,22 +1,30 @@
 
 Latest update:
 
-April 22, 2018 - Major updates for this version include:
+May 16, 2018 - Final update before hand-in
 
-- The entire application has been restructured to be more inline with the ModelViewController pattern.
+This update includes minor additions, revisions and improvements to the application. In addition, the project is now published as a public repository on GitHub.
 
-- Added loading of multiline FASTA files. Please note that when loading FASTA files which contain sequences using the letters 'A', 'C', 'G' and 'T' the application will replace all occurrences of the letter 'T' with the letter 'U'.
+You can find the repository at this address: https://github.com/d-andersen/FYProject
 
-- Added a result bar to the visualization area, which displays a list of the matches found. The result bar is both closable and movable. In addition, a header is shown when displaying the sequence computed. This header can be turned off.
+Furthermore, the project now also has its own website using GitHub Pages, however at the time of writing this update, the website has yet to be updated. You can find this page via the address: https://d-andersen.github.io/FYProject/
 
-- Readded the matrix representation to the application. The matrix representation is now shown in a movable box, which can also be closed if desired.
 
-- Readded the dot-bracket representation to the application. The dot-bracket representation can also be turned off.
+Listed below are some of the changes included in this update.
 
-- Improvements have been made to both sequence visualization and circle visualization. These improvements include:
-        - Both visualizations are now movable and zoomable.
-        - Matchlines are now colored, and sized more inline with the type of binding.
-        - Matchlines now overlap less often (sequence only).
+- A guide on protein synthesis has been added. The guide can be accessed via the help menu at the top or by pressing F1.
+
+- An alternative version of the Nussinov algorithm has been added, which uses an energy function to minimize free energy in the sequence. Choosing which algorithm the application should use, can be selected in a small box, placed in extension of the sequence input area.
+
+- The visualizations have been updated to accommodate the addition of the energy variant of the Nussinov algorithm.
+
+- The welcome screen should now be even more welcoming, providing direct access to the main features of the application.
+
+- Some tooltips have been added.
+
+- The Nussinov algorithm has undergone minor revisions in an effort to fix a bug.
+
+- Further bug hunting has squashed additional minor bugs.
         
         
         

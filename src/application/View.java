@@ -3,10 +3,11 @@ package application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -31,7 +32,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 24, 2018
+ * May 16, 2018
  */
 
 public class View extends BorderPane {
@@ -42,24 +43,30 @@ public class View extends BorderPane {
     // MenuBar, Menus and MenuItems
     MenuBar menuBar;
     Menu fileMenu, viewMenu, helpMenu;
-    MenuItem open, exit, about;
+    MenuItem open, exit, about, guide;
     CheckMenuItem showTabHeader, showTabInfoBox;
 
     // ToolBars
     ToolBar inputToolBar, checkBoxToolBar;
 
     // Labels
-    Label bottomInfoLabel;
+    Label bottomInfoLabel, openLabel, guideLabel, runLabel;
 
     // Fields
-    TextField inputSequence;
+    TextField inputSequence, inputField;
 
     // Buttons
     Button processButton;
 
-    // Checkboxes
+    // CheckBoxes
     CheckBox circleCheckBox, sequenceCheckBox, matrixCheckBox,
              dotBracketCheckBox;
+
+    // ComboBoxes
+    ComboBox modeSelector;
+
+    // Tooltips
+    Tooltip sequenceTooltip, circleTooltip, bracketTooltip, matrixTooltip, processTooltip, modeTooltip;
 
     /**
      * Contructor to initiate the construction of the view.
@@ -100,13 +107,49 @@ public class View extends BorderPane {
         headerContainer.setPadding( new Insets( 10, 10, 10, 10 ) );
         headerContainer.setMaxWidth( 800 );
 
-        Label header = new Label( "Project 78 - Sequence Structure Prediction using Java." );
+        Label header = new Label( "Project 78 - Sequence Structure Prediction using Java" );
         header.setPadding( new Insets( 10, 0, 5, 50 ) );
         header.setFont( Font.font( "", FontWeight.BLACK, 22 ) );
 
-        Label subHeader = new Label( "By Dennis Andersen, Marta Massa Gyldenkerne and Arulmolibarman Muthukrishnan." );
+        Label subHeader = new Label( "By Dennis Andersen, Marta Massa Gyldenkerne and Arulmolibarman Muthukrishnan" );
         subHeader.setPadding( new Insets( 10, 0, 5, 50 ) );
         subHeader.setFont( Font.font( "", FontWeight.BOLD, 16 ) );
+
+        HBox inputBox = new HBox();
+        inputBox.setPadding( new Insets( 10, 0, 10, 0 ) );
+        inputField = new TextField();
+        inputField.setMinSize( 760, 60 );
+        inputField.setMaxSize( 760, 60 );
+        inputField.getStyleClass().add( "tab-textfield" );
+        inputField.setText( "gggaaaccu" );
+
+        runLabel = new Label( "Try this sequence" );
+        runLabel.setMinSize( 220, 60 );
+        runLabel.setMaxSize( 220, 60 );
+        runLabel.setAlignment( Pos.CENTER );
+        runLabel.getStyleClass().add( "tablabel" );
+        inputBox.getChildren().addAll( inputField, runLabel );
+
+        HBox hBox = new HBox();
+        hBox.setPadding( new Insets( 10, 0, 10, 0 ) );
+        hBox.setMinWidth( 980 );
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.setMinWidth( 980 );
+        openLabel = new Label( "Open a FASTA file" );
+        openLabel.setMinSize( 480, 60 );
+        openLabel.setMaxSize( 480, 60 );
+        openLabel.setAlignment( Pos.CENTER );
+        openLabel.getStyleClass().add( "tablabel" );
+
+        guideLabel = new Label( "Learn more about RNA" );
+        guideLabel.setMinSize( 480, 60 );
+        guideLabel.setMaxSize( 480, 60 );
+        guideLabel.setAlignment( Pos.CENTER );
+        guideLabel.getStyleClass().add( "tablabel" );
+        AnchorPane.setLeftAnchor( openLabel, 0.0 );
+        AnchorPane.setRightAnchor( guideLabel, 0.0 );
+        anchorPane.getChildren().addAll( openLabel, guideLabel );
+        hBox.getChildren().add( anchorPane );
 
         Line line = new Line( 122, 100, 902, 100 );
         line.setStroke( Color.valueOf( "2f4f4f" ) );
@@ -121,11 +164,15 @@ public class View extends BorderPane {
         VBox contentContainer = new VBox();
         contentContainer.setMaxWidth( 980 );
         contentContainer.setPadding( new Insets( 10, 0, 10, 0 ) );
-        contentContainer.setAlignment( Pos.TOP_CENTER );
+        //contentContainer.setAlignment( Pos.TOP_CENTER );
 
         Text welcomeText = new Text( LoadTextFile.load( "welcome.txt" ) );
         welcomeText.setWrappingWidth( 980 );
         welcomeText.setFont( Font.font( 16 ) );
+
+        Text infoText = new Text( LoadTextFile.load( "info.txt" ) );
+        infoText.setWrappingWidth( 980 );
+        infoText.setFont( Font.font( 16 ) );
 
         Line sectionSep = new Line( 22, 390, 1002, 390 );
         sectionSep.setStroke( Color.valueOf( "2f4f4f" ) );
@@ -135,7 +182,13 @@ public class View extends BorderPane {
         updateText.setWrappingWidth( 980 );
         updateText.setFont( Font.font( 16 ) );
 
-        contentContainer.getChildren().addAll( welcomeText, sectionSep, updateText );
+        contentContainer.getChildren().addAll(
+                welcomeText,
+                inputBox,
+                hBox,
+                infoText,
+                sectionSep,
+                updateText );
         mainContainer.getChildren().addAll( headerContainer, contentContainer );
         root.setContent( mainContainer );
 
@@ -159,44 +212,83 @@ public class View extends BorderPane {
 
         checkBoxToolBar = new ToolBar();
         checkBoxToolBar.setPadding( new Insets( 5, 10, 5, 10 ) );
-
+        // top-left, top-right, bottom-right, and bottom-left corners, in that order.
         inputSequence = new TextField();
+        //inputSequence.setStyle( "-fx-border-color: lightgrey; -fx-border-radius: 3 0 0 3; -fx-background-color: white; -fx-background-radius: 3 0 0 3;" );
+        inputSequence.getStyleClass().add( "top-textfield" );
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius( 1.0 );
+        dropShadow.setOffsetY( 1.0 );
+        dropShadow.setColor( Color.color( 1.0, 1.0, 1.0 ) );
+        inputSequence.setEffect( dropShadow );
+
         HBox.setHgrow( inputSequence, Priority.ALWAYS );
 
-        // the input bar can be enlarged by using for example the following code
-        //inputToolBar.setMinHeight( 45 );
-        //input.setFont( Font.font( "Verdana", FontWeight.BOLD, 20 ) );
-        //input.setMinHeight( 35 );
-        //Button button = new Button( ">" );
-        //button.setFont( Font.font( "Verdana", FontWeight.BOLD, 20 ) );
-        //button.setMinWidth( 35 );
-        //button.setMinHeight( 35 );
+        modeSelector = new ComboBox();
+        //modeSelector.setStyle( "-fx-border-color: lightgrey; -fx-border-radius: 0 3 3 0; -fx-background-color: white; -fx-background-radius: 0 3 3 0;" );
+        modeSelector.getStyleClass().add( "combo-box" );
+        modeSelector.setMinSize( 135, 27 );
+        modeSelector.setMaxSize( 135, 27 );
+        modeSelector.getItems().addAll("Basic Nussinov", "Energy Nussinov" );
+        modeSelector.setValue( "Basic Nussinov" );
+        modeSelector.setEditable( false );
+        modeTooltip = new Tooltip();
+        modeTooltip.setText( "Select which algorithm to use" );
+        modeTooltip.getStyleClass().add( "tooltip" );
+        modeSelector.setTooltip( modeTooltip );
 
-        HBox.setMargin( inputSequence, new Insets( 0,5,0,0 ) );
+        HBox.setMargin( modeSelector, new Insets( 0,5,0,-5 ) );
         inputSequence.setPromptText( "Enter RNA string" );
 
         processButton = new Button( "Process" );
         processButton.setMinWidth( 80 );
+        processButton.setMinHeight( 27 );
+        processTooltip = new Tooltip();
+        processTooltip.setText( "Process the RNA sequence to visualize it" );
+        processTooltip.getStyleClass().add( "tooltip" );
+        processButton.setTooltip( processTooltip );
+        //Image img = new Image( "run.png" );
+        //processButton = new Button();
+        //processButton.setMinSize( 54, 27 );
+        //processButton.setMaxSize( 54, 27 );
+        //processButton.setGraphic( new ImageView( img ) );
 
         sequenceCheckBox = new CheckBox();
         sequenceCheckBox.setMinWidth( 120 );
         sequenceCheckBox.setText( "Sequence" );
         sequenceCheckBox.setSelected( true );
+        sequenceTooltip = new Tooltip();
+        sequenceTooltip.setText( "Visualize the RNA sequence as a line" );
+        sequenceTooltip.getStyleClass().add( "tooltip" );
+        sequenceCheckBox.setTooltip( sequenceTooltip );
 
         circleCheckBox = new CheckBox();
         circleCheckBox.setMinWidth( 120 );
         circleCheckBox.setText( "Circle Plot" );
         circleCheckBox.setSelected( true );
+        circleTooltip = new Tooltip();
+        circleTooltip.setText( "Visualize the RNA sequence as a circle" );
+        circleTooltip.getStyleClass().add( "tooltip" );
+        circleCheckBox.setTooltip( circleTooltip );
 
         matrixCheckBox = new CheckBox();
         matrixCheckBox.setMinWidth( 120 );
         matrixCheckBox.setText( "Matrix" );
+        matrixTooltip = new Tooltip();
+        matrixTooltip.setText( "Show the dynamically programmed matrix of the RNA sequence" );
+        matrixTooltip.getStyleClass().add( "tooltip" );
+        matrixCheckBox.setTooltip( matrixTooltip );
 
         dotBracketCheckBox = new CheckBox();
         dotBracketCheckBox.setMinWidth( 120 );
         dotBracketCheckBox.setText( "Dot-Bracket" );
+        bracketTooltip = new Tooltip();
+        bracketTooltip.setText( "Show Dot-Bracket notation for the RNA sequence" );
+        bracketTooltip.getStyleClass().add( "tooltip" );
+        dotBracketCheckBox.setTooltip( bracketTooltip );
 
-        inputToolBar.getItems().addAll( inputSequence, processButton );
+        inputToolBar.getItems().addAll( inputSequence, modeSelector, processButton );
         checkBoxToolBar.getItems().addAll( sequenceCheckBox, circleCheckBox, dotBracketCheckBox, matrixCheckBox );
 
         topMenu.getChildren().addAll( menuBar, inputToolBar, checkBoxToolBar );
@@ -258,8 +350,10 @@ public class View extends BorderPane {
         List<MenuItem> items = new ArrayList<>();
 
         // creates the contents, i.e. items in a menu
+        guide = new MenuItem( "_Learn About RNA" );
         about = new MenuItem("_About");
 
+        items.add( guide );
         items.add( about );
 
         return items;

@@ -19,7 +19,7 @@ import javafx.stage.Stage;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 22, 2018
+ * May 16, 2018
  */
 
 public class Main extends Application {
@@ -41,6 +41,7 @@ public class Main extends Application {
 
         View view = new View();
         Scene scene = new Scene( view, 1024, 768 );
+        scene.getStylesheets().add( "style.css" );
         Controller controller = new Controller( view );
 
         primaryStage.setScene( scene );

@@ -36,7 +36,7 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 24, 2018
+ * May 16, 2018
  */
 
 public class Controller {
@@ -56,6 +56,7 @@ public class Controller {
     private int tabHeaderContainerCount = 0;
     private int tabInfoContainerCount = 0;
     private int tabBracketContainerCount = 0;
+    private int mode = 0;
 
 
     /**
@@ -73,12 +74,13 @@ public class Controller {
         assignButtonEvents();
         assignCheckBoxEvents();
         assignMenuEvents();
-        assignShortcutEvents();
+        assignOtherEvents();
     }
 
 
     /** Associates functionality with the buttons in the view. */
-    private void assignButtonEvents() { view.processButton.setOnAction( event ->
+    private void assignButtonEvents() {
+        view.processButton.setOnAction( event ->
             computeSequence( view.inputSequence.getText(), "" )
         );
     }
@@ -159,45 +161,7 @@ public class Controller {
                 KeyCombination.SHORTCUT_DOWN
         ) );
 
-        view.open.setOnAction( event -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle( "Open File" );
-
-            FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter(
-                    "FASTA files (*.FASTA, *.fasta)", "*.FASTA", "*.fasta" );
-            fileChooser.getExtensionFilters().add( extensionFilter );
-
-            File file = fileChooser.showOpenDialog( Main.getPrimaryStage() );
-
-            if ( file != null ) {
-                StringBuilder stringBuilder = new StringBuilder();
-                String line, sequenceBuilt;
-                int i = 0;
-                List<String> fileHeaders = new ArrayList<>();
-
-                // try-with-resources to auto-close stream
-                try (InputStream inputStream = new FileInputStream( file );
-                     BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( inputStream ) ) ) {
-                    while ( ( line = bufferedReader.readLine() ) != null ) {
-                        if ( line.startsWith( ">" ) ) {
-                            fileHeaders.add( line.substring( 1 ) );
-                            sequenceBuilt = stringBuilder.toString();
-                            if ( !sequenceBuilt.isEmpty() ) {
-                                computeSequence( sequenceBuilt, fileHeaders.get( i ) );
-                                stringBuilder.setLength( 0 );
-                                i++;
-                            }
-                        } else {
-                            stringBuilder.append( line );
-                        }
-                    }
-                    sequenceBuilt = stringBuilder.toString();
-                    computeSequence( sequenceBuilt, fileHeaders.get( i ) );
-                } catch ( IOException ex ) {
-                    ex.printStackTrace();
-                }
-            }
-        } );
+        view.open.setOnAction( event -> openFile() );
 
 
         /* ****************** assign functionality to viewMenuItems ******************* */
@@ -249,20 +213,114 @@ public class Controller {
 
 
         /* ****************** assign functionality to helpMenuItems ******************* */
+        view.guide.setOnAction( event -> {
+            showGuide();
+        } );
+
         view.about.setOnAction( event -> AboutBox.display() );
 
     }
 
 
     /** Associates other functionality */
-    private void assignShortcutEvents() {
+    private void assignOtherEvents() {
         view.inputSequence.setOnKeyPressed( event -> {
             if ( event.getCode().equals( KeyCode.ENTER ) ) {
                 computeSequence( view.inputSequence.getText(), "" );
             }
         } );
+
+        view.modeSelector.setOnAction( event -> {
+            if ( view.modeSelector.getValue().equals( "Basic Nussinov" ) ) {
+                mode = 0;
+            } else if ( view.modeSelector.getValue().equals( "Energy Nussinov" ) ) {
+                mode = 1;
+            }
+        } );
+
+        view.setOnKeyPressed( event -> {
+            if ( event.getCode().equals( KeyCode.F1 ) ) {
+                showGuide();
+            }
+        } );
+
+        view.inputField.setOnKeyPressed( event -> {
+            if ( event.getCode().equals( KeyCode.ENTER ) ) {
+                computeSequence( view.inputField.getText(), "" );
+            }
+        } );
+
+        view.runLabel.setOnMouseClicked( event -> computeSequence( view.inputField.getText(), "" ) );
+
+        view.openLabel.setOnMouseClicked( event -> openFile() );
+
+        view.guideLabel.setOnMouseClicked( event -> showGuide() );
+
     }
 
+    /** Displays the info-graphic on protein synthesis in a new tab. */
+    private void showGuide() {
+        Tab tab = new Tab();
+        tab.setText( "Learn About RNA" );
+
+
+        ScrollPane root = new ScrollPane();
+        root.setFitToWidth( true );
+
+        VBox mainContainer = new VBox();
+        mainContainer.setAlignment( Pos.TOP_CENTER );
+
+        StackPane stackPane = Guide.create();
+
+        mainContainer.getChildren().add( stackPane );
+        root.setContent( mainContainer );
+
+        tab.setContent( root );
+
+        // show tab in view
+        view.mainTabPane.getTabs().add( tab );
+        view.mainTabPane.getSelectionModel().select( tab );
+    }
+
+    private void openFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle( "Open File" );
+
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter(
+                "FASTA files (*.FASTA, *.fasta)", "*.FASTA", "*.fasta" );
+        fileChooser.getExtensionFilters().add( extensionFilter );
+
+        File file = fileChooser.showOpenDialog( Main.getPrimaryStage() );
+
+        if ( file != null ) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String line, sequenceBuilt;
+            int i = 0;
+            List<String> fileHeaders = new ArrayList<>();
+
+            // try-with-resources to auto-close stream
+            try (InputStream inputStream = new FileInputStream( file );
+                 BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( inputStream ) ) ) {
+                while ( ( line = bufferedReader.readLine() ) != null ) {
+                    if ( line.startsWith( ">" ) ) {
+                        fileHeaders.add( line.substring( 1 ) );
+                        sequenceBuilt = stringBuilder.toString();
+                        if ( !sequenceBuilt.isEmpty() ) {
+                            computeSequence( sequenceBuilt, fileHeaders.get( i ) );
+                            stringBuilder.setLength( 0 );
+                            i++;
+                        }
+                    } else {
+                        stringBuilder.append( line );
+                    }
+                }
+                sequenceBuilt = stringBuilder.toString();
+                computeSequence( sequenceBuilt, fileHeaders.get( i ) );
+            } catch ( IOException ex ) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     /**
      * Initiate the computation of the sequence entered in the inputTextField
@@ -304,19 +362,20 @@ public class Controller {
         if ( str.isEmpty() ) { return; }
 
         // start an instance of the Nussinov Algorithm to compute the input sequence
-        Nussinov nussinov = new Nussinov();
-        int[][] matrix = nussinov.initiate( str );
+        // mode determines which variant to use. 0 -> base pair maximizing (basic), 1 -> energy minimizing (energy)
+        Nussinov nussinov = new Nussinov( str, mode );
+        int[][] matrix = nussinov.initiate();
 
         // create visual representations
         StackPane displayVisualization = new StackPane();
         if ( view.sequenceCheckBox.isSelected() ) {
-            InteractiveCanvas interactiveCanvas = createSequenceCanvas( str, nussinov.getMatches() );
+            InteractiveCanvas interactiveCanvas = createSequenceCanvas( str, nussinov.getSecondaryStructure() );
             interactiveCanvas.setId( "SequenceCanvas" + ++sequenceCanvasCount );
             canvasList.add( interactiveCanvas );
             displayVisualization.getChildren().addAll( interactiveCanvas );
         }
         if ( view.circleCheckBox.isSelected() ) {
-            InteractiveCanvas interactiveCanvas = createCircleCanvas( str, nussinov.getMatches() );
+            InteractiveCanvas interactiveCanvas = createCircleCanvas( str, nussinov.getSecondaryStructure() );
             interactiveCanvas.setId( "CircleCanvas" + ++circleCanvasCount );
             canvasList.add( interactiveCanvas );
             displayVisualization.getChildren().add( interactiveCanvas );
@@ -335,7 +394,7 @@ public class Controller {
         }
 
         // create the infoBox
-        MovableContainer tabInfoContainer = createTabInfoBox( nussinov.getMatches(), chars );
+        MovableContainer tabInfoContainer = createTabInfoBox( nussinov.getSecondaryStructure(), chars );
         tabInfoContainer.setId( "TabInfoBox" + ++tabInfoContainerCount );
         tabInfoContainers.add( tabInfoContainer );
         if ( !view.showTabInfoBox.isSelected() ) {
@@ -439,10 +498,10 @@ public class Controller {
         // sets a scalar to adjust the size of the radius based on the input length of the string
         if ( length < 10 ) {
             width = ( ( length * 40 ) + 36 );
-            height = ( 30 + ( length * 10 ) + 36 ) * 0.7;
+            height = ( 30 + ( length * 10 ) + 36 ) * 0.9;
         } else if ( length < 25 ) {
             width = ( ( length * 40 ) + 36 );
-            height = ( 30 + ( length * 10 ) + 36 ) * 0.6;
+            height = ( 30 + ( length * 10 ) + 36 ) * 0.9;
         } else if ( length < 50 ) {
             width = ( ( length * 30 ) + 24 );
             height = ( 30 + ( length * 10 ) + 24 ) * 0.6;
@@ -531,13 +590,14 @@ public class Controller {
         grid.setAlignment( Pos.CENTER );
 
         // double loop which creates a matrix representation
+        String s;
         for ( int y = 0; y < size + 1; y++ ) {
             for ( int x = 0; x < size + 1; x++ ) {
 
                 // create a new Label in each iteration
                 Label label = new Label();
-                label.setMinHeight( 15 );
-                label.setMinWidth( 15 );
+                label.setMinHeight( 20 );
+                label.setMinWidth( 40 );
                 label.setFont( monoFont );
                 label.setFont( Font.font( 12 ) );
                 label.setAlignment( Pos.CENTER );
@@ -548,7 +608,10 @@ public class Controller {
                 } else if( x == 0 ) {
                     label.setText( String.valueOf( charArray[y - 1] ).toUpperCase() );
                 } else {
-                    label.setText( String.valueOf( matrix[y - 1][x - 1] ) );
+                    s = String.valueOf( matrix[y - 1][x - 1] );
+                    if ( !s.equals( "0" ) ) {
+                        label.setText( s );
+                    }
                 }
 
                 // iterate the index using the loops
@@ -622,7 +685,8 @@ public class Controller {
                 new Image( "guanine-small.png" ),
                 new Image( "urasil-small.png" ),
                 new Image( "double-binding-small.png" ),
-                new Image( "triple-binding-small.png" )
+                new Image( "triple-binding-small.png" ),
+                new Image( "single-binding-small.png" )
         };
 
         DropShadow dropShadow = Visualize.createShadowEffect();
@@ -666,7 +730,7 @@ public class Controller {
         sequenceLengthCountLabel.setFont( Font.font( 16 ) );
         sequenceLengthCountLabel.setAlignment( Pos.CENTER_RIGHT );
 
-        Label matchesLabel = new Label( "Number of Matches:" );
+        Label matchesLabel = new Label( "Base Pairs:" );
         matchesLabel.setFont( Font.font( 14 ) );
 
         Label matchesCountLabel = new Label(  String.valueOf( matches.size() ) );
@@ -688,6 +752,7 @@ public class Controller {
         VBox.setVgrow( matchesListView, Priority.SOMETIMES );
 
         int i, j;
+        int sbindings = 0;
         int dbindings = 0;
         int tbindings = 0;
         for ( Tuple t : matches ) {
@@ -714,15 +779,29 @@ public class Controller {
                 rightGraphicsLabel.setGraphic( new ImageView( images[2] ) );
                 tbindings++;
             } else if ( chars[i] == 'G' ) {
-                leftGraphicsLabel.setGraphic( new ImageView( images[2] ) );
-                middleGraphicsLabel.setGraphic( new ImageView( images[5] ) );
-                rightGraphicsLabel.setGraphic( new ImageView( images[1] ) );
-                tbindings++;
+                if ( chars[j] == 'C' ) {
+                    leftGraphicsLabel.setGraphic( new ImageView( images[2] ) );
+                    middleGraphicsLabel.setGraphic( new ImageView( images[5] ) );
+                    rightGraphicsLabel.setGraphic( new ImageView( images[1] ) );
+                    tbindings++;
+                } else if ( chars[j] == 'U' ) {
+                    leftGraphicsLabel.setGraphic( new ImageView( images[2] ) );
+                    middleGraphicsLabel.setGraphic( new ImageView( images[6] ) );
+                    rightGraphicsLabel.setGraphic( new ImageView( images[3] ) );
+                    sbindings++;
+                }
             } else if ( chars[i] == 'U' ) {
-                leftGraphicsLabel.setGraphic( new ImageView( images[3] ) );
-                middleGraphicsLabel.setGraphic( new ImageView( images[4] ) );
-                rightGraphicsLabel.setGraphic( new ImageView( images[0] ) );
-                dbindings++;
+                if ( chars[j] == 'A' ) {
+                    leftGraphicsLabel.setGraphic( new ImageView( images[3] ) );
+                    middleGraphicsLabel.setGraphic( new ImageView( images[4] ) );
+                    rightGraphicsLabel.setGraphic( new ImageView( images[0] ) );
+                    dbindings++;
+                } else if ( chars[j] == 'G' ) {
+                    leftGraphicsLabel.setGraphic( new ImageView( images[3] ) );
+                    middleGraphicsLabel.setGraphic( new ImageView( images[6] ) );
+                    rightGraphicsLabel.setGraphic( new ImageView( images[2] ) );
+                    sbindings++;
+                }
             }
             g.add( leftGraphicsLabel, 0 , 0 );
             g.add( middleGraphicsLabel, 1 , 0 );
@@ -731,6 +810,14 @@ public class Controller {
 
             matchesListViewItems.add( g );
         }
+
+        Label sbindingsLabel = new Label( "Single Bindings:" );
+        sbindingsLabel.setFont( Font.font( 14 ) );
+
+        Label sbindingsCountLabel = new Label(  String.valueOf( sbindings ) );
+        sbindingsCountLabel.setMinWidth( 45 );
+        sbindingsCountLabel.setFont( Font.font( 16 ) );
+        sbindingsCountLabel.setAlignment( Pos.CENTER_RIGHT );
 
         Label dbindingsLabel = new Label( "Double Bindings:" );
         dbindingsLabel.setFont( Font.font( 14 ) );
@@ -748,10 +835,12 @@ public class Controller {
         tbindingsCountLabel.setFont( Font.font( 16 ) );
         tbindingsCountLabel.setAlignment( Pos.CENTER_RIGHT );
 
-        overview.add( dbindingsLabel, 0, 2 );
-        overview.add( dbindingsCountLabel, 1, 2 );
-        overview.add( tbindingsLabel, 0, 3 );
-        overview.add( tbindingsCountLabel, 1, 3 );
+        overview.add( sbindingsLabel, 0, 2 );
+        overview.add( sbindingsCountLabel, 1, 2 );
+        overview.add( dbindingsLabel, 0, 3 );
+        overview.add( dbindingsCountLabel, 1, 3 );
+        overview.add( tbindingsLabel, 0, 4 );
+        overview.add( tbindingsCountLabel, 1, 4 );
 
         overviewContainer.getChildren().add( overview );
 

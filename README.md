@@ -1,5 +1,37 @@
 # FYProject
 
+Latest update:
+
+May 16, 2018 - Final update before hand-in
+
+This update includes minor additions, revisions and improvements to the application. In addition, the project is now published as a public repository on GitHub.
+
+You can find the repository at this address: https://github.com/d-andersen/FYProject
+
+Furthermore, the project now also has its own website using GitHub Pages, however at the time of writing this update, the website has yet to be updated. You can find this page via the address: https://d-andersen.github.io/FYProject/
+
+
+Listed below are some of the changes included in this update.
+
+* A guide on protein synthesis has been added. The guide can be accessed via the help menu at the top or by pressing F1.
+
+* An alternative version of the Nussinov algorithm has been added, which uses an energy function to minimize free energy in the sequence. Choosing which algorithm the application should use, can be selected in a small box, placed in extension of the sequence input area.
+
+* The visualizations have been updated to accommodate the addition of the energy variant of the Nussinov algorithm.
+
+* The welcome screen should now be even more welcoming, providing direct access to the main features of the application.
+
+* Some tooltips have been added.
+
+* The Nussinov algorithm has undergone minor revisions in an effort to fix a bug.
+
+* Further bug hunting has squashed additional minor bugs.
+
+
+*- Dennis*
+
+---
+
 April 22, 2018.
 
 The project has now been updated, with the application having gone through a major rework, such that it now more closely follows the ModelViewController pattern. The impact of these changes is most evident in the `main.java` file, which has now been split into `controller.java` and `view.java`, with the result being that the application has been completely restructured. The `controller` now manages all functionality and takes care of all inputs from the user. In addition, all clickables should now have functionality attached. The `view` contains the improvements upon the original layout code.

@@ -12,11 +12,11 @@ import java.util.List;
  *
  * An implementation of the Nussinov algorithm, based on the work done by
  * R. Nussinov, G. Pieczenik, D. J. Kleitman (1978) - Algorithms for Loop
- * Matching. SIAM J Appl.
+ * Matching. SIAM J Appl Math 35, 68-81.
  *
  * This particular implementation is based on pseudo-code from slides by
  * Oliver Kohlbacher (2014), Eberhard Karls Universität Tubringen,
- * slides for BIOINF 4120 - Bioinformatics 2 - Structures and Systems
+ * slides for BIOINF 4120 - Bioinformatics 2 - Structures and Systems.
  *
  * The following sequence from above-mentioned slides can be used to test
  * the algorithm, and should yield results (1,7) and (2,6). Beware however
@@ -33,82 +33,105 @@ import java.util.List;
  *
  * Supervisor: Philipp Weber, Ph.D. Student, Computer Science
  *
- * April 21, 2018
+ * May 16, 2018
  */
 
 public class Nussinov {
 
-    /** Dynamically programmed matrix */
+    /** The RNA sequence. */
+    final private String THE_SEQUENCE;
+
+    /** Determines which variant of the Nussinov algorithm to use. */
+    final private int MODE;
+
+    /** Dynamically programmed matrix. */
     private int[][] DPmatrix;
 
-    /** char arrays to represent input and outputArray sequences */
-    private char[] inputArray, outputArray;
+    /** char arrays to represent input and outputArray sequences. */
+    private char[] inputArray;
 
-    /** List of tuples to hold the entries to DPmatrix of the matches found */
-    private List<Tuple> matches = new ArrayList<>();
+    /** ArrayList of tuples to hold the entries to DPmatrix of the secondaryStructure found. */
+    private ArrayList<Tuple> secondaryStructure = new ArrayList<>();
 
-    /** Keeps track of the number of matches found */
-    private int matchesCount = 0;
-
+    /**
+     * Constructor.
+     *
+     * @param sequence a String representing the RNA sequence.
+     * @param mode     an integer to identify which variant of the algorithm should be used.
+     */
+    public Nussinov( String sequence, int mode ) {
+        this.THE_SEQUENCE = sequence;
+        this.MODE = mode;
+        inputArray = sequence.toCharArray();
+    }
 
     /**
      * Starts the Nussinov algorithm.
      *
-     * This method computes the DPmatrix from a provided sequence of
-     * characters using a dynamic programming approach. Once the entries
-     * of the matrix has been computed, a traceback procedure is initiated
-     * to find any matches in the sequence.
+     * Calls the compute method to fill the DPmatrix from the provided sequence
+     * of characters.
      *
-     * @param s a sequence to be computed
-     * @return a result matrix
+     * @return a dynamically programmed matrix.
      */
-    int[][] initiate( String s ) {
-        DPmatrix = new int[s.length()][s.length()];
-        inputArray = s.toCharArray();
-        outputArray = new char[inputArray.length];
-        Arrays.fill(outputArray, '.' );
+    public int[][] initiate() {
+        return compute( THE_SEQUENCE );
+    }
+
+    /**
+     * Computes a DPmatrix using a dynamic programming approach. Once the entries
+     * of the matrix has been computed, a traceback procedure is initiated
+     * to find any secondary structure of the sequence.
+     *
+     * @param sequence an RNA sequence
+     * @return a dynamically programmed matrix.
+     */
+    private int[][] compute( String sequence ) {
+        DPmatrix = new int[sequence.length()][sequence.length()];
+
         int i = 0;
         int j = 0;
-        int l;
-        for ( l = 1; l < DPmatrix.length; l++ ) {
+        int l, case1, case2, case3;
+        for ( l = 4; l < DPmatrix.length; l++ ) {
             for ( j = l; j < DPmatrix.length; j++ ) {
                 i = j - l;
-                DPmatrix[i][j] = compute( i, j );
+                case1 = DPmatrix[i + 1][j];
+                case2 = DPmatrix[i][j - 1];
+
+                if ( MODE == 0 ) { // if Basic Nussinov is used, number of matches is maximized
+                    case3 = DPmatrix[i + 1][j - 1] + delta( i, j );
+
+                    DPmatrix[i][j] = Math.max( Math.max( case1, case2 ), case3 );
+
+                    for ( int k = i + 1; k < j; k++ ) {
+                        if ( DPmatrix[i][k] + DPmatrix[k+1][j] > DPmatrix[i][j] ) {
+                            DPmatrix[i][j] = DPmatrix[i][k] + DPmatrix[k+1][j];
+                        }
+                    }
+                } else { // if Energy Nussinov is used, free energy is minimized
+                    case3 = DPmatrix[i + 1][j - 1] + energy( i, j );
+
+                    DPmatrix[i][j] = Math.min( Math.min( case1, case2 ), case3 );
+
+                    for ( int k = i + 1; k < j; k++ ) {
+                        if ( DPmatrix[i][k] + DPmatrix[k+1][j] < DPmatrix[i][j] ) {
+                            DPmatrix[i][j] = DPmatrix[i][k] + DPmatrix[k+1][j];
+                        }
+                    }
+                }
             }
         }
-        traceback( i, j - 1 );
+        traceback( secondaryStructure, DPmatrix, i, j - 1 );
         return DPmatrix;
     }
 
     /**
-     * Computational part of Nussinov algorithm.
+     * Delta part of Nussinov algorithm.
      *
      * @param i a value i into the DPmatrix.
      * @param j a value j into the DPmatrix.
-     * @return the max value computed.
+     * @return 1 if base pairs are a match and 0 otherwise.
      */
-    private int compute( int i, int j ) {
-        int a = DPmatrix[i + 1][j];
-        int b = DPmatrix[i][j - 1];
-        int c = DPmatrix[i + 1][j - 1] + sigma( i, j );
-        int k = i + 1;
-        int d = 0;
-        if( k > 1 && k < j ) {
-            d = DPmatrix[i][k] + DPmatrix[k + 1][j];
-        }
-        int r1 = Math.max( a, b );
-        int r2 = Math.max( c, d );
-        return Math.max( r1, r2 );
-    }
-
-    /**
-     * Sigma part of Nussinov algorithm.
-     *
-     * @param i a value i into the DPmatrix.
-     * @param j a value j into the DPmatrix.
-     * @return
-     */
-    private int sigma( int i, int j ) {
+    private int delta( int i, int j ) {
         char a = inputArray[i];
         char b = inputArray[j];
         if( ( a == 'C' && b == 'G' ) ||
@@ -116,22 +139,38 @@ public class Nussinov {
             ( a == 'A' && b == 'U' ) ||
             ( a == 'U' && b == 'A' ) ) {
             return 1;
+        } else {
+            return 0;
         }
-        // Outline for a way of adding weigth to scores
-        /*if( ( a == 'C' && b == 'G' ) ||
+    }
+
+    /**
+     * Energy function for the Nussinov algorithm.
+     *
+     * @param i a value i into the DPmatrix.
+     * @param j a value j into the DPmatrix.
+     * @return the lowest energy value of any of the base pairs G-C,
+     *         A-U or U-G, or 0 otherwise.
+     */
+    private int energy( int i, int j ) {
+        char a = inputArray[i];
+        char b = inputArray[j];
+        if( ( a == 'C' && b == 'G' ) ||
             ( a == 'G' && b == 'C' ) ) {
-                return 3;
+            return -12;
         }
         else if ( ( a == 'A' && b == 'U' ) ||
-                ( a == 'U' && b == 'A' ) ) {
-            return 2;
+                  ( a == 'U' && b == 'A' ) ) {
+            return -8;
         }
         else if ( ( a == 'G' && b == 'U' ) ||
-                ( a == 'U' && b == 'G' ) ) {
-            return 1;
-        }*/
-        return 0;
+                  ( a == 'U' && b == 'G' ) ) {
+            return -4;
+        } else {
+            return 0;
+        }
     }
+
 
     /**
      * Traceback part of Nussinov algorithm.
@@ -139,30 +178,31 @@ public class Nussinov {
      * @param i a value i into the DPmatrix.
      * @param j a value j into the DPmatrix.
      */
-    private void traceback( int i, int j ) {
+    private void traceback( ArrayList<Tuple> matches, int[][] DPmatrix, int i, int j ) {
         if( i < j ) {
             // case 1
             if( DPmatrix[i][j] == DPmatrix[i + 1][j] ) {
-                traceback( i + 1, j );
+                traceback( matches, DPmatrix , i + 1, j );
             }
 
             // case 2
-            else if( DPmatrix[i][j] == DPmatrix[i][j - 1] ) {
-                traceback( i, j - 1 );
+            else if ( DPmatrix[i][j] == DPmatrix[i][j - 1] ) {
+                traceback( matches, DPmatrix, i, j - 1 );
             }
 
             // case 3
-            else if( DPmatrix[i][j] == ( DPmatrix[i + 1][j - 1] + sigma( i, j ) ) ) {
-                checkMatch( i, j );
-                traceback( i + 1, j - 1 );
+            else if ( DPmatrix[i][j] == ( DPmatrix[i + 1][j - 1] + delta( i, j ) ) ||
+                      DPmatrix[i][j] == ( DPmatrix[i + 1][j - 1] + energy( i, j ) ) ) {
+                matches.add( new Tuple( i, j ) );
+                traceback(matches, DPmatrix, i + 1, j - 1);
             }
 
             // case 4
             else {
-                for ( int k = ( i + 1 ); k <= ( j - 1 ); k++ ) {
+                for ( int k = i + 1; k <= j - 1; k++ ) {
                     if( DPmatrix[i][j] == ( DPmatrix[i][k] + DPmatrix[k + 1][j] ) ) {
-                        traceback( i, k );
-                        traceback( k + 1, j );
+                        traceback( matches, DPmatrix, i, k );
+                        traceback( matches, DPmatrix,k + 1, j );
                         break;
                     }
                 }
@@ -170,51 +210,33 @@ public class Nussinov {
         }
     }
 
-    /**
-     * Method that uses sigma method to check for letter matches.
-     * In addition, a check has been included, to ensure that a match found
-     * by the Nussinov algorithm is only added to the list of matches, if
-     * the spacing between letters is greater than 3.
-     *
-     * @param i a value i into the DPmatrix.
-     * @param j a value j into the DPmatrix.
-     */
-    private void checkMatch( int i, int j ) {
-        /*if( sigma( i, j ) == 1 ) {
-            matches.add( new Tuple( i, j ) );
-        }*/
-        if( ( sigma( i, j ) > 0 ) && ( j - i ) > 3 ) {
-            matches.add( new Tuple( i, j ) );
-            matchesCount++;
-        }
-    }
 
     /**
-     * Retrives and returns the matches found by the Nussinov algorithm.
-     * The matches found are returned as a list of tuples, representing
+     * Retrives and returns the secondaryStructure found by the Nussinov algorithm.
+     * The secondaryStructure found are returned as a list of tuples, representing
      * entries to the DPmatrix.
      *
-     * @return a List of Tuples representing the matches found.
+     * @return a List of Tuples representing the secondaryStructure found.
      */
-    List<Tuple> getMatches() { return matches; }
+    List<Tuple> getSecondaryStructure() { return secondaryStructure; }
 
-    /**
-     * Returns the number of matches found by the Nussinov algorithm.
-     *
-     * @return the number of matches found as an int.
-     */
-    int getMatchesCount() { return matchesCount; }
 
     /**
      * Translates the result of the DPmatrix to Dot-Bracket notation and
      * stores the result in a char array.
+     *
+     * @return the Dot-Bracket notation in a char array.
      */
-    private void createDotBracket() {
-        for ( Tuple t : matches ) {
+    private char[] createDotBracket() {
+        char[] outputArray = new char[inputArray.length];
+        Arrays.fill( outputArray, '.' );
+        for ( Tuple t : secondaryStructure) {
             outputArray[t.getI()] = '(';
             outputArray[t.getJ()] = ')';
         }
+        return outputArray;
     }
+
 
     /**
      * Retrieves and returns a Dot-Bracket notation of the current sequence.
@@ -222,15 +244,14 @@ public class Nussinov {
      * @return a Dot-Bracket notation of the sequence.
      */
     String getDotBracketOutput() {
-        createDotBracket();
-        return String.valueOf( outputArray );
+        return String.valueOf( createDotBracket() );
     }
 
+
     /**
-     * Helped method for printing the contents of the matrix to the System
-     * output.
+     * Helper method for printing the contents of the matrix to the System output.
      *
-     * @return a String representation of the matrix
+     * @return a String representation of the matrix.
      */
     private String printMatrix() {
         String res = "";
